@@ -1,0 +1,79 @@
+{
+  "builder_name": "parquet",
+  "citation": "",
+  "config_name": "arc_challenge",
+  "dataset_name": "robust-finetuning",
+  "dataset_size": 821931,
+  "description": "",
+  "download_checksums": {
+    "hf://datasets/appier-ai-research/robust-finetuning@cbaf933e3c6aa70307f7637b959c8045dfd84912/arc_challenge/train-00000-of-00001.parquet": {
+      "num_bytes": 189939,
+      "checksum": null
+    },
+    "hf://datasets/appier-ai-research/robust-finetuning@cbaf933e3c6aa70307f7637b959c8045dfd84912/arc_challenge/test-00000-of-00001.parquet": {
+      "num_bytes": 203838,
+      "checksum": null
+    },
+    "hf://datasets/appier-ai-research/robust-finetuning@cbaf933e3c6aa70307f7637b959c8045dfd84912/arc_challenge/validation-00000-of-00001.parquet": {
+      "num_bytes": 55761,
+      "checksum": null
+    }
+  },
+  "download_size": 449538,
+  "features": {
+    "id": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "question": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "choices": {
+      "feature": {
+        "text": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "label": {
+          "dtype": "string",
+          "_type": "Value"
+        }
+      },
+      "_type": "Sequence"
+    },
+    "answerKey": {
+      "dtype": "string",
+      "_type": "Value"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 1271469,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 349760,
+      "num_examples": 1119,
+      "dataset_name": "robust-finetuning"
+    },
+    "test": {
+      "name": "test",
+      "num_bytes": 375511,
+      "num_examples": 1172,
+      "dataset_name": "robust-finetuning"
+    },
+    "validation": {
+      "name": "validation",
+      "num_bytes": 96660,
+      "num_examples": 299,
+      "dataset_name": "robust-finetuning"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}

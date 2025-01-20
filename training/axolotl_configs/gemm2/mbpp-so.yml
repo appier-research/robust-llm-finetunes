@@ -1,0 +1,81 @@
+base_model: google/gemma-2-2b-it
+model_type:  AutoModelForCausalLM
+tokenizer_type: AutoTokenizer
+
+load_in_8bit: false
+load_in_4bit: false
+strict: false
+
+chat_template: gemma
+datasets:
+  - path: dataset/self-output/mbpp/google-gemma-2-2b-it-lowest-ppl
+    split: train
+    type: chat_template
+    chat_template: gemma
+    field_messages: conversations
+    message_field_role: role
+    message_field_content: content
+test_datasets:
+  - path: dataset/self-output/mbpp/google-gemma-2-2b-it-lowest-ppl
+    split: validation
+    type: chat_template
+    chat_template: gemma
+    field_messages: conversations
+    message_field_role: role
+    message_field_content: content
+
+dataset_prepared_path: last_run_prepared
+output_dir: trained_models/mbpp-so-gemma2-2b
+
+sequence_len: 4096
+sample_packing: false
+pad_to_sequence_len: true
+
+adapter: lora
+lora_model_dir:
+lora_r: 32
+lora_alpha: 16
+lora_dropout: 0.05
+lora_target_linear: true
+lora_fan_in_fan_out:
+
+wandb_project: estimate-ft-from-icl
+wandb_entity: johnson-wu
+wandb_watch:
+wandb_name: gemma2-2b-it-mbpp-so
+wandb_log_model: gemma2-2b
+
+gradient_accumulation_steps: 1
+micro_batch_size: 2
+num_epochs: 3
+max_steps: 
+save_total_limit: 10
+optimizer: adamw_bnb_8bit
+lr_scheduler: cosine
+learning_rate: 0.00002
+
+train_on_inputs: false
+group_by_length: false
+bf16: auto
+fp16:
+tf32: false
+
+gradient_checkpointing: true
+early_stopping_patience:
+resume_from_checkpoint:
+local_rank:
+logging_steps: 1
+xformers_attention:
+flash_attention: true
+s2_attention:
+
+warmup_steps: 10
+evals_per_epoch: 1
+eval_table_size:
+eval_max_new_tokens: 256
+saves_per_epoch: 
+debug:
+deepspeed:
+weight_decay: 0.0
+fsdp:
+fsdp_config:

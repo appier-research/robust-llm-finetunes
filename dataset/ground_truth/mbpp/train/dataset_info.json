@@ -1,0 +1,100 @@
+{
+  "builder_name": "parquet",
+  "citation": "",
+  "config_name": "mbpp-merged",
+  "dataset_name": "robust-finetuning",
+  "dataset_size": 5617302,
+  "description": "",
+  "download_checksums": {
+    "hf://datasets/appier-ai-research/robust-finetuning@cbaf933e3c6aa70307f7637b959c8045dfd84912/mbpp-merged/train-00000-of-00001.parquet": {
+      "num_bytes": 175896,
+      "checksum": null
+    },
+    "hf://datasets/appier-ai-research/robust-finetuning@cbaf933e3c6aa70307f7637b959c8045dfd84912/mbpp-merged/validation-00000-of-00001.parquet": {
+      "num_bytes": 48427,
+      "checksum": null
+    },
+    "hf://datasets/appier-ai-research/robust-finetuning@cbaf933e3c6aa70307f7637b959c8045dfd84912/mbpp-merged/test-00000-of-00001.parquet": {
+      "num_bytes": 1210646,
+      "checksum": null
+    }
+  },
+  "download_size": 1434969,
+  "features": {
+    "task_id": {
+      "dtype": "int64",
+      "_type": "Value"
+    },
+    "text": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "code": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "test_list": {
+      "feature": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "_type": "Sequence"
+    },
+    "conversations": [
+      {
+        "from": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "value": {
+          "dtype": "string",
+          "_type": "Value"
+        }
+      }
+    ],
+    "test": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "source_file": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "test_imports": {
+      "feature": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "_type": "Sequence"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 7052271,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 432550,
+      "num_examples": 374,
+      "dataset_name": "robust-finetuning"
+    },
+    "validation": {
+      "name": "validation",
+      "num_bytes": 103902,
+      "num_examples": 90,
+      "dataset_name": "robust-finetuning"
+    },
+    "test": {
+      "name": "test",
+      "num_bytes": 5080850,
+      "num_examples": 378,
+      "dataset_name": "robust-finetuning"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}

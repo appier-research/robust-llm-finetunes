@@ -1,0 +1,82 @@
+{
+  "builder_name": "parquet",
+  "citation": "",
+  "config_name": "math-resample",
+  "dataset_name": "robust-finetuning",
+  "dataset_size": 14019038,
+  "description": "",
+  "download_checksums": {
+    "hf://datasets/appier-ai-research/robust-finetuning@cbaf933e3c6aa70307f7637b959c8045dfd84912/math-resample/train-00000-of-00001.parquet": {
+      "num_bytes": 5342280,
+      "checksum": null
+    },
+    "hf://datasets/appier-ai-research/robust-finetuning@cbaf933e3c6aa70307f7637b959c8045dfd84912/math-resample/validation-00000-of-00001.parquet": {
+      "num_bytes": 579209,
+      "checksum": null
+    },
+    "hf://datasets/appier-ai-research/robust-finetuning@cbaf933e3c6aa70307f7637b959c8045dfd84912/math-resample/test-00000-of-00001.parquet": {
+      "num_bytes": 748922,
+      "checksum": null
+    }
+  },
+  "download_size": 6670411,
+  "features": {
+    "problem": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "level": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "type": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "solution": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "conversations": [
+      {
+        "from": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "value": {
+          "dtype": "string",
+          "_type": "Value"
+        }
+      }
+    ]
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 20689449,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 11252694,
+      "num_examples": 6766,
+      "dataset_name": "robust-finetuning"
+    },
+    "validation": {
+      "name": "validation",
+      "num_bytes": 1193267,
+      "num_examples": 734,
+      "dataset_name": "robust-finetuning"
+    },
+    "test": {
+      "name": "test",
+      "num_bytes": 1573077,
+      "num_examples": 1000,
+      "dataset_name": "robust-finetuning"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}
