@@ -1,0 +1,8 @@
+agent_name: "zeroshot"
+# LLM hyperparameters
+llm:
+  series: "hf_model_lora"
+  model_name: "meta-llama/Meta-Llama-3-8B-Instruct"
+  temperature: 0.0
+  max_tokens: 512
+  load_adapter: "trained_models/checkpoint-50"
