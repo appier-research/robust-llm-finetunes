@@ -1,0 +1,100 @@
+{
+  "builder_name": "arrow",
+  "citation": "",
+  "config_name": "default",
+  "dataset_name": "arrow",
+  "dataset_size": 5617195,
+  "description": "",
+  "download_checksums": {
+    "/root/robust-sft/robust-llm-finetunes/dataset/ground_truth/mbpp/train/data-00000-of-00001.arrow": {
+      "num_bytes": 434752,
+      "checksum": null
+    },
+    "/root/robust-sft/robust-llm-finetunes/dataset/ground_truth/mbpp/validation/data-00000-of-00001.arrow": {
+      "num_bytes": 106128,
+      "checksum": null
+    },
+    "/root/robust-sft/robust-llm-finetunes/dataset/ground_truth/mbpp/test/data-00000-of-00001.arrow": {
+      "num_bytes": 5083056,
+      "checksum": null
+    }
+  },
+  "download_size": 5623936,
+  "features": {
+    "task_id": {
+      "dtype": "int64",
+      "_type": "Value"
+    },
+    "text": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "code": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "test_list": {
+      "feature": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "_type": "Sequence"
+    },
+    "conversations": [
+      {
+        "from": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "value": {
+          "dtype": "string",
+          "_type": "Value"
+        }
+      }
+    ],
+    "test": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "source_file": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "test_imports": {
+      "feature": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "_type": "Sequence"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 11241131,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 432503,
+      "num_examples": 374,
+      "dataset_name": "arrow"
+    },
+    "validation": {
+      "name": "validation",
+      "num_bytes": 103890,
+      "num_examples": 90,
+      "dataset_name": "arrow"
+    },
+    "test": {
+      "name": "test",
+      "num_bytes": 5080802,
+      "num_examples": 378,
+      "dataset_name": "arrow"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}

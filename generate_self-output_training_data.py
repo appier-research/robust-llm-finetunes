@@ -14,6 +14,7 @@ from utils import calculate_perplexity
 from utils import normalize_extracted_answer, normalize_response
 from typing import Dict, List, Union
 from openai import OpenAI
+import time
 
 PROMPT_TEMPLATE = """Below are an instruction that describes a task along with a reference answer. Using the reference answer as a guide, write your own response.
 ### Instruction:
@@ -41,12 +42,13 @@ def gen_mbpp_sample(args, pipe, base_name, temp=0.7, samples=32, split="train"):
             for line in f:
                 payload = json.loads(line)
                 added.add(payload['row_id'])
-    dataset = "dataset/ground_truth/mbpp/dataset"
-    dataset = load_dataset("arrows", data_files={"train":os.path.join(dataset,"train/data-00000-of-00001.arrow")})
+    dataset = "dataset/ground_truth/mbpp"
+    dataset = load_dataset("arrow", data_files={f"{split}":os.path.join(dataset,f"{split}/data-00000-of-00001.arrow")})[split]
     print("MBPP", split)
-    for row_id, row in tqdm(enumerate(tqdm(dataset))):
+    for row_id, row in tqdm(enumerate(dataset)):
         if row_id in added:
             continue
+        # print(row)
         prompt = PROMPT_TEMPLATE.format(instruction=row['conversations'][0]['value'], original_response=row['conversations'][1]['value'])
         negative_samples = [ row['conversations'][1]['value'] ]
         positive_samples = []
@@ -114,7 +116,7 @@ def gen_mbpp_sample(args, pipe, base_name, temp=0.7, samples=32, split="train"):
             f.write(json.dumps(row)+'\n')
     return output_filename
 
-def groq_math_sample(args, pipe, base_name, temp=0.7, split='validation', samples=16):
+def groq_math_sample(args, pipe, base_name, temp=0.7, split='train', samples=16):
     from evals.normalization import math_normalizer
     from evals.openai_sampler import ChatCompletionSampler
     from evals.common import check_equality
@@ -128,8 +130,8 @@ Remember to put your answer on its own line after "Answer:", and you do not need
 """.strip()
 
     print('MATH')
-    dataset = "dataset/ground_truth/math/dataset"
-    dataset = load_dataset("arrows", data_files={"train":os.path.join(dataset,"train/data-00000-of-00001.arrow")})
+    dataset = "dataset/ground_truth/math"
+    dataset = load_dataset("arrow", data_files={f"{split}":os.path.join(dataset,f"{split}/data-00000-of-00001.arrow")})[split]
     output_filename = f'dataset/{args.mode}/math-t2_{base_postfix}_dpo_sample_{split}_t_{temp}.jsonl'
     added = set()
     if os.path.exists(output_filename):
@@ -319,20 +321,26 @@ def gen_arc_sample(pipe, base_name, temp=0.7, samples=32, split="train"):
         with open(output_filename, 'a') as f:
             f.write(json.dumps(row)+'\n')
 
-def test_arc(base_model, split):
-    pipe = None
-    gen_arc_sample(pipe, base_model, temp=0.7, samples=32, split=split)
-
-def cal_ppl_file(file= "test.jsonl", base_model=""):
+def cal_ppl_file(args, file= "test.jsonl", base_model=""):
     output_filename= file.replace('.jsonl', '_wrejppl.jsonl')
+    print(base_model, file, output_filename)
     train = pd.read_json(file, lines=True)
-    print(base_model)
     tokenizer = AutoTokenizer.from_pretrained(base_model)
     model = AutoModelForCausalLM.from_pretrained(base_model, torch_dtype=torch.bfloat16, device_map='cuda')
-    new_row=[]
     for ind,row in tqdm(train.iterrows()):
         row = row.to_dict()
-        accept = row['rejection']
+        accept =[]
+        REJECT =[]
+        if args.rejection!="None":
+            REJECT = row['rejection']
+            if len(REJECT)==0 or (len(REJECT)==1 and  ('src' in REJECT[0] and REJECT[0]['src']=='ground_truth')):
+                continue
+            for text in REJECT:
+                if type(text)==dict and 'content' in text:
+                    text['ppl'] = calculate_perplexity(text['content'], model, tokenizer)
+                else:
+                    continue
+        accept = row['accept']
        
         if len(accept)==0 or (len(accept)==1 and  ('src' in accept[0] and accept[0]['src']=='ground_truth')):
             continue
@@ -341,64 +349,14 @@ def cal_ppl_file(file= "test.jsonl", base_model=""):
                 text['ppl'] = calculate_perplexity(text['content'], model, tokenizer)
             else:
                 continue
+        if len(accept)!=0:
+            row['accept'] = accept
+        if len(REJECT)!=0:
+            row['rejection']=REJECT
         with open(output_filename, 'a') as f:
             f.write(json.dumps(row)+'\n')
-def test_mbpp(file, split):
-    from evals.humaneval_utils.executor import check_correctness
-    generation_json = pd.read_json(file, lines=True)
-    def extract_code(text):
-        pattern = r'```(?:python)?\s*(.*?)```?'
-        code_blocks = re.findall(pattern, text, re.DOTALL)
-        return code_blocks
-
-    def extract_after_exec_content(code_context: str) -> str:
-        return re.findall(pattern=r'exec_context.*"""', string=code_context, flags=re.DOTALL)
-    dataset = load_dataset("appier-ai-research/robust-finetuning", "mbpp-merged", split=split)
-    print("MBPP", split)
-    output_filename = file.replace("_wppl","_wppl_rew")
-    for ind, gen in generation_json.iterrows():
-        gen = gen.to_dict()
-        generations = gen['accept']
-        instruction = gen['instruction']
-        found = False
-        for row_id, row in tqdm(enumerate(tqdm(dataset))):
-            if row['conversations'][0]['value']==instruction:
-                found = True
-                break
-        print(row['conversations'][0]['value']==instruction)
-        assert found==True
-        negative_samples = []
-        positive_samples = []
-        gt_answer = {'content': row['conversations'][1]['value'], 'src': 'ground_truth', 'correct': True, 'order': -1 }
-        
-        for idx, generation in enumerate(generations):
-            failed = False
-            try:
-                match = extract_code(generation['content'])[0].rstrip()
-            except Exception as e:
-                match = generation['content'].rstrip()
-                failed = True
-    
-            if failed:
-                generation['correct'] = False
-                generation['result'] = 'extraction_failed'
-                negative_samples.append(generation)
-            else:
-                row['test'] = '\n'.join(row['test_list'])
-                result = check_correctness(row, match, timeout=10, completion_id=row_id)
-                generation['correct'] = result['result'] == 'passed'
-                generation['result'] = json.dumps(result)
-                if result['result'] == 'passed':
-                    positive_samples.append(generation)
-                else:
-                    negative_samples.append(generation)
-        # we do not found correct answer, use original prompt as ground truth       
-        gen['accept'] = positive_samples
-        gen['rejection'] = negative_samples
-        with open(output_filename, 'a') as f:
-            f.write(json.dumps(gen)+'\n')
-        
 def main(args):
+    start = time.time()
     base_model = args.base_model
     task =args.task
     tokenizer = AutoTokenizer.from_pretrained(base_model)
@@ -418,15 +376,17 @@ def main(args):
         pipe = None
         train_file = groq_math_sample(args, pipe, base_model, temp=0.7, samples=nsamples, split="train")
         val_file = groq_math_sample(args, pipe, base_model, temp=0.7, samples=nsamples, split="validation")
+    print('finish self-generating, elasped time:', time.time()-start)
+    start =time.time()
     for file in [train_file, val_file]:
-        cal_ppl_file(file, base_model)
+        cal_ppl_file(args, file, base_model)
 
     def lowest(l):
         return 0
     def rand(l):
         import random
         return random.choice(range(l))
-    dataset = load_dataset("arrow", data_files = {"train":f"dataset/ground_truth/{task}/train/data-00000-of-00001.arrow", "validation":f"dataset/ground_truth/{task}/validation/data-00000-of-00001.arrow", "test":f"dataset/ground_truth/{task}/test/data-00000-of-00001.arrow"})
+    pick = lowest
     new_train = []
     new_val = []
     pick_first = 0
@@ -446,11 +406,9 @@ def main(args):
         path += '_correct_random'
     neg_case = 0
     avg_ppl =[]
-    train = pd.read_json(train_file, lines=True)
-    val = pd.read_json(val_file, lines=True)
-    for (ind, rephrase), origin in zip(train.iterrows(), dataset['train']):
-        # print(rephrase['instruction'])
-        # print(origin['text'])
+    train = pd.read_json(train_file.replace('.jsonl','_wrejppl.jsonl'), lines=True)
+    val = pd.read_json(val_file.replace('.jsonl','_wrejppl.jsonl'), lines=True)
+    for ind, rephrase in train.iterrows():
         
         rephrase['rejection'] = [i for i in rephrase['rejection'] if type(i)is dict and i['src']!='ground_truth']
         rephrase['accept'] = [i for i in rephrase['accept'] if type(i)is dict and i['src']!='ground_truth']
@@ -493,7 +451,7 @@ def main(args):
     pick_first = 0
     pick_last = 0
     avg_ppl = []
-    for (ind, rephrase), origin in zip(val.iterrows(), dataset['validation']):
+    for ind, rephrase in val.iterrows():
 
         rephrase['accept'] = [i for i in rephrase['accept']if type(i)is dict and  i['src']!='ground_truth']
         sorted_pool = sorted(rephrase['accept'], key=lambda x: x["ppl"], reverse=False)
@@ -518,6 +476,7 @@ def main(args):
         new_val.append({"conversations": conversations})
     # print(len(new_val), pick_first, pick_last, val_gt, sum(avg_diff)/len(avg_diff), sum(avg_ppl)/len(avg_ppl))
     from datasets import Dataset
+    dataset = load_dataset("arrow", data_files={"train": f"dataset/ground_truth/{task}/train/data-00000-of-00001.arrow", "validation": f"dataset/ground_truth/{task}/validation/data-00000-of-00001.arrow", "test": f"dataset/ground_truth/{task}/test/data-00000-of-00001.arrow"})
     dataset['train'] = Dataset.from_list(new_train)
     dataset['validation'] = Dataset.from_list(new_val)
     dataset.save_to_disk(path)
@@ -531,6 +490,6 @@ if __name__ == "__main__":
     parser.add_argument("--task", type=str, help="Path to the model to load", default="mbpp", choices=['mbpp', 'math'])
     parser.add_argument("--rejection", type=str, help="Path to the model to load", default="None", choices = ["None", "lowest_all_correct", "incorrect", "random"])
     args = parser.parse_args()
-    )
+    
     main(args)
 

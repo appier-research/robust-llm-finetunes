@@ -1,13 +1,15 @@
 # robust-llm-finetunes-
 ## To started with...
 ### Environment setup
-- install axolotl >=0.5.1 from their [repository](https://github.com/axolotl-ai-cloud/axolotl)
 - some basic commands to establish a training/inference envionment:
   ```
   conda create -n robust-sft python=3.10
   conda activate robust-sft
   pip install -r requirements.txt
   ```
+- note that you could install feasible cuda version of pytorch 2.3.1 according to your computing device.
+- install axolotl >=0.5.1 from their [repository](https://github.com/axolotl-ai-cloud/axolotl)
+
 To reproduce our results. you need to generate the training data first
 ## Generation of training task data.
 ### SO (Self-Output generated data) for Llama3-8B Instruct on MBPP
