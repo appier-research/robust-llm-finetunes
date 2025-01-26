@@ -76,3 +76,7 @@ export OPENAI_ORGANIZATION="{your openai org}"
 echo "llama example"
 python -m stream_bench.pipelines.run_bench     --agent_cfg "configs/agents/example.yml"     --bench_cfg "configs/bench/bird.yml"     --entity "{your wandb entty name}"     --use_wandb
 ```
+# Citation
+### If you find our work helpful, please cite as
+```
+```
