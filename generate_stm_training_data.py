@@ -6,6 +6,7 @@ import numpy as np
 from datasets import load_dataset, Dataset
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch.nn.functional as F
+import argparse
 
 def calculate_token_metrics_with_surprisal(logits, target_ids):
     """
@@ -44,8 +45,8 @@ if __name__ == "__main__":
     parser.add_argument("--base_model", type=str, help="Path to the model to load", default="meta-llama/Meta-Llama-3-8B-Instruct")
     parser.add_argument("--task", type=str, help="Task data to generate stm training data", default="mbpp", choices=['mbpp', 'math'])
     parser.add_argument("--stm", type=str, help="Whether or not to apply stm data alternatives", default="None", choices=['None','stm_dpf', 'dpf'])
-    parser.add_argument("--stm_adatper", type=str, help="Path to the adapter to load for stm filters", choices=['stm_dpf', 'dpf'])
-    
+    parser.add_argument("--stm_adapter", type=str, help="Path to the adapter to load for stm filters", choices=['stm_dpf', 'dpf'])
+    args = parser.parse_args()
     model_path = args.base_model
     task = args.task
     tokenizer = AutoTokenizer.from_pretrained(model_path)
@@ -59,7 +60,7 @@ if __name__ == "__main__":
     if args.stm:
         output_file +'_'+args.stm
     data = []
-    for example in tqdm(dataset['train'], dynamic_ncols=True):
+    for example in tqdm(dataset, dynamic_ncols=True):
         prompt = example[messages_key][0]
         prompt = [ {'role': 'user', 'content': prompt['value']} ]
         # prompt = [ {'role': 'user', 'content': prompt['content']} ]
@@ -98,7 +99,7 @@ if __name__ == "__main__":
         example['ppl'] = token_ppls
         example['text'] = formatted_message
         data.append(example)
-    if args.stm:
+    if args.stm and args.stm!="None":
         model.load_adapter(args.stm_adapter)
         diff_data = []
     

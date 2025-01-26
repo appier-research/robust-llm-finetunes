@@ -34,7 +34,7 @@ def validate_checkpoint(load_adapter,
         torch_dtype=None
     ):
     import glob
-    dataset = load_dataset("arrow", data_files={"validation":"dataset/ground_truth/math/validation/data-00000-of-00001.arrow",split="validation")
+    dataset = load_dataset("arrow", data_files={"validation":"dataset/ground_truth/math/validation/data-00000-of-00001.arrow"},split="validation")
     checkpoint2scores = {}
     mini_sampler = ChatCompletionSampler(model="gpt-4o-mini-2024-07-18")
     for checkpoint in glob.glob(load_adapter):
@@ -175,21 +175,9 @@ def main(load_adapter, few_shot=0, resume=None, base_model="unsloth/llama-3-8b-I
 
             problem = row['problem']
             test_question = QUERY_TEMPLATE.format(Question=problem)
-            # test_question = "\nProblem: " + problem + "\n" + "Answer: $"
-            # input_text = train_prompt
-            # if few_shot > 0:
-            #     input_text += '\nExamples:\n'+few_shot_text+'\n'
-            #     input_text += 'Now answer this question:\n'
-            # input_text += test_question
             messages = [
                 {"role": "user", "content": test_question},
             ]
-            # if 'mistral' in base_model:
-            #     # system_prompt = messages[0]['content']
-            #     # messages = [ {"role": "user", "content": system_prompt+'\n'+messages[1]['content'] }]
-            #     from transformers import AutoTokenizer
-            #     tokenizer = AutoTokenizer.from_pretrained(base_model)
-            #     messages = tokenizer.apply_chat_template(messages, tokenize=False)
             generation = pipe(messages, max_new_tokens=512)[0]['generated_text'][-1]['content']
             match = re.search(ANSWER_PATTERN, generation)
             extracted_answer = match.group(1) if match else math_normalizer(generation)

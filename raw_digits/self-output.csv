@@ -1,0 +1,264 @@
+in domain,method,model,in-domain-dataset,selected,training task,self-output criteria,avg ppl (overall),avg ppl (only gt),avg ppl (rm gt),training step,gt data/ data size,epoch size,avg token length,gt model,original base,mbpp test,math test,arc test (cot),arc test,gsm8k,bird-test,mbpp-test vs gt model,mbpp-test vs original llama,math-test vs gt model,math-test vs original llama,arc test vs gt model,arc test vs original llama,gsm8k vs task gt model,gsm8k vs original llama
+,,,,FALSE,setting 1,,,,,,,,,,,,,,,,,,,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp,lowest,3.39,11.4,1.84,100,41/253,0.790513834,,0.5308,0.5979,0.6008,,,,0.7862,,7%,0.26%,,,25.34%,0.34%,22.44%,1.06%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,lowest,3.39,11.4,1.84,200,41/253,1.581027668,,0.5582,0.5979,0.6322,,,,0.765,,7.40%,0.37%,,,26.70%,1.79%,23.20%,-1.06%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,Q1,4.01,10.23,2.56,100,48/253,0.790513834,,0.5308,0.5979,0.6347,,,,,,10.39%,3.70%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp,Q1,4.01,10.23,2.56,200,48/253,1.581027668,,0.5582,0.5979,0.5556,,,,0.7672,,-0.26%,-4.23%,,,,,20.54%,-0.84%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,Q2,4.9,10.23,3.66,100,48/253,0.790513834,,0.5308,0.5979,0.6223,,,,0.7874,,9.15%,3.44%,,,,,22.29%,0.91%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,Q2,4.9,10.23,3.66,200,48/253,1.581027668,,0.5582,0.5979,0.6190,,,,0.7779,,6.08%,4.76%,,,,,24.49%,0.23%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,Q3,6.15,10.4,4.95,100,56/253,0.790513834,,0.5308,0.5979,0.6190,,,,0.7718,,8.82%,2.11%,,,,,21.00%,-0.38%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,Q3,6.15,10.4,4.95,200,56/253,1.581027668,,0.5582,0.5979,0.5741,,,,0.7832,,1.59%,-2.38%,,,,,22.50%,0.76%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,highest,14.6,12.68,12.48,100,218/253,0.790513834,,0.5308,0.5979,0.5291,,,,0.6376,,-0.17%,-6.88%,,,,,7.58%,-13.80%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,highest,14.6,12.68,12.48,200,218/253,1.581027668,,0.5582,0.5979,0.5582,,,,0.5974,,0%,-4.50%,,,,,6.44%,-17.82%
+mbpp,,,,FALSE,remove gt,,,,,,,,,,,,,,,,,,,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp,lowest,1.84,0,1.84,100,0/212,0.9433962264,,0.5308,0.5979,0.6138,,,,0.7938,,8.30%,1.59%,,,25.81%,0.81%,23.20%,1.82%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,lowest,1.84,0,1.84,200,0/212,1.886792453,,0.5582,0.5979,0.6005,,,,0.7801,,4.23%,0.26%,,,,,24.71%,0.45%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,Q1,2.56,0,2.56,100,0/205,0.9433962264,,0.5308,0.5979,0.6058,,,,0.7839,,7.50%,0.79%,,,26.11%,1.11%,22.21%,0.83%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,Q1,2.56,0,2.56,200,0/205,1.886792453,,0.5582,0.5979,0.5969,,,,0.7733,,3.97%,0.00%,,,,,24.03%,-0.23%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,Q2,3.66,0,3.66,100,0/205,0.9433962264,,0.5308,0.5979,0.6085,,,,0.7672,,7.77%,1.06%,,,25.69%,0.69%,20.54%,-0.84%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,Q2,3.66,0,3.66,200,0/205,1.886792453,,0.5582,0.5979,0.5847,,,,0.7733,,2.65%,-1.32%,,,,,24.03%,-0.23%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,Q3,4.95,0,4.95,100,0/197,0.9433962264,,0.5308,0.5979,0.5873,,,,0.771,,5.65%,-1.06%,,,24.66%,-0.34%,20.92%,-0.46%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,Q3,4.95,0,4.95,197,0/197,1.886792453,,0.5582,0.5979,0.6138,,,,,,5.56%,1.59%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp,highest,12.48,0,12.48,36,0/35,0.9433962264,,0.5308,0.5979,0.5899,,,,0.771,,5.91%,-0.80%,,,,,20.92%,-0.46%
+mbpp,,,mbpp,FALSE,not considering gt at fiirst,,,,,,,,,,,,,,,,,,,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp,lowest,1.86,0,1.86,100,0/213,0.9389671362,193,0.5308,0.5979,0.6138,0.314,,,,,8.30%,1.59%,7.67%,0.00%,25.69%,0.69%,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp,lowest,1.86,0,1.86,200,0/213,1.877934272,193,0.5582,0.5979,0.6164,0.323,,,0.7779,,,1.85%,9.17%,0.90%,25.77%,0.86%,24.49%,0.23%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,Q1,2.54,0,2.54,100,0/213,0.9389671362,140,0.5308,0.5979,0.624,0.321,,,0.7854,,5.82%,2.61%,8.37%,0.70%,25.86%,0.86%,22.36%,0.98%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,Q1,2.54,0,2.54,200,0/213,1.877934272,140,0.5582,0.5979,0.6138,,,,0.7763,,5.56%,1.59%,,,26.11%,1.20%,24.33%,0.07%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,Q2,3.48,0,3.48,100,0/213,0.9389671362,109,0.5308,0.5979,0.5952,0.318,,,0.7741,,6.44%,-0.27%,8.07%,0.40%,25.51%,0.51%,21.23%,-0.15%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,Q2,3.48,0,3.48,200,0/213,1.877934272,109,0.5582,0.5979,0.6138,0.331,,,0.7809,,5.56%,1.59%,9.97%,1.70%,25.68%,0.77%,24.79%,0.53%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,Q3,4.67,0,4.67,100,0/213,0.9389671362,84,0.5308,0.5979,0.6138,,,,0.7794,,8.30%,1.59%,,,25.00%,0.51%,21.76%,0.38%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,Q3,4.67,0,4.67,200,0/213,1.877934272,84,0.5582,0.5979,0.6323,0.333,,,0.7892,,7.41%,3.44%,10.17%,1.90%,25.00%,0.09%,25.62%,1.36%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,highest,6.44,0,6.44,100,0/213,0.9389671362,61,0.5308,0.5979,0.6111,0.315,,,0.7854,,8.03%,1.32%,7.77%,0.10%,25.69%,0.69%,22.36%,0.98%
+mbpp,self-output,llama,mbpp,FALSE,mbpp,highest,6.44,0,6.44,200,0/213,1.877934272,61,0.5582,0.5979,0.6085,0.326,,,0.7847,,5.03%,1.06%,9.47%,1.20%,24.66%,-0.25%,25.17%,0.91%
+,,,,FALSE,setting 3,,,,,,,ep2 has highest val accuracy in lowest,,,,,,,,,,,,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep1,lowest,1.86,0,1.86,108,0/213,1,193,0.5344,0.5979,0.619,0.319,0.814,,0.7839,,,2.11%,,,,,,
+mbpp,self-output,llama,mbpp,TRUE,mbpp-ep2,lowest,1.86,0,1.86,216,0/213,2,193,0.5079,0.5979,0.6164,0.334,0.8242,0.7918,0.7839,0.2001,*highest val accuracy,1.85%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep3,lowest,1.86,0,1.86,324,0/213,3,193,0.5608,0.5979,0.6323,0.322,0.8225,,0.7862,,,3.44%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep1,Q1,2.54,0,2.54,108,0/213,1,140,0.5344,0.5979,0.6296,x,0.8123,,x,,,3.17%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep2,Q1,2.54,0,2.54,216,0/213,2,109,0.5079,0.5979,0.6111,x,x,,x,,,1.32%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep3,Q1,2.54,0,2.54,324,0/213,3,109,0.5608,0.5979,0.6217,x,x,,x,,,2.38%,,,,,,
+mbpp,self-output,llama,mbpp,TRUE,mbpp-ep1,Q2,3.48,0,,108,0/213,1,,0.5344,0.5979,0.619,0.313,0.8072,,0.7953,,8.46%,2.11%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep2,Q2,3.48,0,,216,0/213,2,,0.5079,0.5979,0.5979,0.313,0.8114,,,,9.00%,0.00%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep3,Q2,3.48,0,,324,0/213,3,,0.5079,0.5979,WIP,WIP,WIP,,0.7862,,#VALUE!,#VALUE!,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep1,Q3,,0,,,0/213,1,,0.5344,0.5979,x,x,0.8166,,x,,,,,,,,,
+mbpp,self-output,llama,mbpp,TRUE,mbpp-ep1,highest,6.44,0,6.44,108,0/213,1,84,0.5344,0.5979,0.6349,0.313,0.7978,,0.7839,,,3.70%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep2,highest,6.44,0,6.44,216,0/213,2,84,0.5079,0.5979,0.6217,,0.8166,,0.7718,,,2.38%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep3,highest,6.44,0,6.44,324,0/213,3,61,0.5608,0.5979,0.6349,,,,0.7915,,,3.70%,,,,,,
+,self-output,mistral,mbpp,FALSE,mbpp-ep1,lowest,1.89,0,1.89,73,0/292,1,298,0.4815,0.4868,0.4709,0.19,0.6869,,0.2252,,,,,,,,,
+,self-output,mistral,mbpp,TRUE,mbpp-ep2,lowest,1.89,0,1.89,146,0/292,2,298,0.4815,0.4868,0.4917,0.182,0.6724,0.6903,0.2343,0.1375,,,,,,,,
+,self-output,mistral,mbpp,FALSE,mbpp-ep3,lowest,1.89,0,1.89,219,0/292,3,298,0.4815,0.4868,0.4894,0.186,0.6809,,0.2396,,,,,,,,,
+,self-output,mistral,mbpp,FALSE,mbpp-ep1,Q2,2.23,0,2.23,,0/292,1,264,0.455,0.4868,,,,,,,,,,,,,,
+,self-output,mistral,mbpp,FALSE,mbpp-ep1,highest,2.68,0,2.68,,0/292,1,223,0.455,0.4868,,,,,,,,,,,,,,
+,self-output,mistral,mbpp,FALSE,mbpp-ep1,rand,2.23,0,2.23,,0/292,1,269,0.455,0.4868,,,,,,,,,,,,,,
+,self-output,gemma,mbpp,TRUE,mbpp-ep1,lowest,1.51,0,1.51,65,0/258,1,413,0.1926,0.51058,0.537,0.281,0.7278,0.5845,0.5019,0.1395,,,,,,,,
+,self-output,gemma,mbpp,FALSE,mbpp-ep2,lowest,1.51,0,1.51,130,0/258,2,413,0.1926,0.51058,0.5291,0.278,0.7295,,0.4936,,,,,,,,,
+,self-output,gemma,mbpp,FALSE,mbpp-ep3,lowest,1.51,0,1.51,195,0/258,3,413,0.1926,0.51058,0.5344,0.292,0.7295,,0.5239,,,,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-length,lowest,6.28,0,6.28,108,0/213,1,47,0.5344,0.5979,0.5979,0.323,,,0.7832,,,0.00%,8.57%,0.90%,-59.98%,-84.98%,22.14%,0.76%
+mbpp,self-output,llama,mbpp,FALSE,mbpp-length,Q2,2.89,0,2.89,108,0/213,1,98,0.5344,0.5979,0.6085,0.339,,,0.7779,,,1.06%,10.17%,2.50%,-59.98%,-84.98%,21.61%,0.23%
+mbpp,self-output,llama,mbpp,FALSE,mbpp-length,highest,2.01,0,2.01,108,0/213,1,270,0.5344,0.5979,0.6164,0.319,,,0.7771,,,1.85%,,,-59.98%,-84.98%,21.53%,0.15%
+mbpp,,,mbpp,FALSE,mbpp gemma-2b-it setting 3,,,,,,,,gt length,gt gemma,gemma-2b-it:,,,,,,,,,,,,,,
+mbpp,self-output,gemma,mbpp,FALSE,mbpp-ep1 on llama output,lowest,,,,,,1,,0.328,0.5079,0.4471,,,,,,11.91%,-6.08%,,,,,,
+mbpp,self-output,gemma,mbpp,FALSE,mbpp-ep1 on llama output,Q2,,,,,,1,,0.328,0.5079,0.4577,,,,,,12.97%,-5.02%,,,,,,
+mbpp,self-output,gemma,mbpp,FALSE,mbpp-ep1 on llama output,highest,,,,,,1,,0.328,0.5079,0.4444,,,,,,11.64%,-6.35%,,,,,,
+mbpp,,,mbpp,FALSE,mbpp rephrase QA setting 3,,,,,,,**llama3-mbpp-ep1-rand has highest val accuracy,,,,,,,,,,** why worse than gt ?, first see samples,** test case error or syntax error,,,,,
+mbpp,rephrase,llama,mbpp,FALSE,mbpp-ep1 ** sample size=8,lowest,1.81,0,1.81,need to exclude self output question,0/213,1,290,0.5397,0.5979,0.5106,0.3,0.785,,0.7119,,-2.91%,-8.73%,,,18.52%,-6.48%,15.01%,-6.37%
+mbpp,rephrase,llama,mbpp,FALSE,mbpp-ep1,Q2,2.25,0,2.25,,0/213,1,258,0.5397,0.5979,0.5794,0.302,0.7875,,0.7301,,3.97%,-1.85%,,-1.20%,18.77%,-6.23%,16.83%,-4.55%
+mbpp,rephrase,llama,mbpp,FALSE,mbpp-ep1,highest,3.04,0,3.04,,0/213,1,219,0.5397,0.5979,0.5661,0.245,0.7688,,0.7278,,2.64%,-3.18%,,-6.90%,16.90%,-8.10%,16.60%,-4.78%
+mbpp,rephrase,llama,mbpp,TRUE,mbpp-ep1,random,2.29,0,2.29,,0/213,1,267,0.5397,0.5979,0.5406,0.3,0.7952,0.7543,0.724,0.1916,0.09%,-5.73%,,,,,,
+,rephrase,mistral,mbpp,FALSE,mbpp-ep1,lowest,2.17,0,2.17,54,0/213,1,175,0.4815,0.4868,0.4709,0.19,0.6869,,,,,,,,,,,
+,rephrase,mistral,mbpp,FALSE,mbpp-ep1,Q2,2.85,0,2.85,54,0/213,1,146,0.4815,0.4868,,,,,,,,,,,,,,
+,rephrase,mistral,mbpp,FALSE,mbpp-ep1,highest,3.96,0,3.96,54,0/213,1,133,0.4815,0.4868,,,,,,,,,,,,,,
+,rephrase,mistral,mbpp,TRUE,mbpp-ep1,random,2.92,0,2.92,54,0/213,1,147,0.4815,0.4868,0.463,0.188,0.5998,0.6775,0.3321,0.1649,,,,,,,,
+,rephrase,mistral,mbpp,FALSE,mbpp-ep2,random,2.92,0,2.92,108,0/213,2,147,0.4815,0.4868,0.4444,0.182,0.5614,,0.3783,,,,,,,,,
+,rephrase,mistral,mbpp,FALSE,mbpp-ep3,random,2.92,0,2.92,162,0/213,3,147,0.4815,0.4868,0.4524,0.191,0.564,,0.3889,,,,,,,,,
+,rephrase,gemma,mbpp,FALSE,mbpp-ep1,lowest,5.83,0,5.83,62,0/246,1,176,0.3995,0.5079,0.5344,,,,,,,,,,,,,
+,rephrase,gemma,mbpp,FALSE,mbpp-ep1,Q2,8.47,0,8.47,62,0/246,1,81,0.3995,0.5079,,,,,,,,,,,,,,
+,rephrase,gemma,mbpp,FALSE,mbpp-ep1,highest,9.93,0,9.93,26,0/246,1,69,0.3995,0.5079,,,,,,,,,,,,,,
+,rephrase,gemma,mbpp,FALSE,mbpp-ep1,random,8.26,0,8.26,62,0/246,1,95,0.3995,0.5079,0.4153,0.267,0.7611,,0.4481,,,,,,,,,
+,rephrase,gemma,mbpp,FALSE,mbpp-ep2,random,8.26,0,8.26,124,0/246,2,95,0.3995,0.5079,0.4683,0.308,0.7517,,0.4731,,,,,,,,,
+,rephrase,gemma,mbpp,TRUE,mbpp-ep3,random,8.26,0,8.26,186,0/246,3,95,0.3995,0.5079,0.4841,0.289,0.7713,0.7056,0.4822,0.1375,,,,,,,,
+mbpp,,,,FALSE,w/o correctness,,,,,,,,,,,,,,,,,,,,,,,,
+,self-output,llama,mbpp,FALSE,"mbpp-ep, lr2e-5, rej=35.1%",lowest,1.76,0,1.76,,0/253,1,213,0.5794,0.5979,0.6058,0.307,,0.7884,0.7862,0.1969,,,,,,,,
+,self-output,llama,mbpp,FALSE,"mbpp-ep, lr2e-5, rej=100%",lowest,2.5,0,2.5,,0/229,3,177,0.5794,0.5979,0.5317,0.324,,0.8012,0.7771,,,,,,,,,
+,self-output,llama,mbpp,TRUE,"mbpp-ep1, lr2e-5, rej=0%",lowest,1.88,0,1.88,,0/194,1,195,0.5794,0.5979,0.6058,0.324,,0.7927,0.7726,0.1994,,,,,,,,
+,self-output,llama,mbpp,TRUE,"mbpp-ep1, lr2e-5, rej=25.25%",lowest,1.76,0,1.76,,0/194,1,217,0.5794,0.5979,0.5926,0.346,,0.7944,0.7779,0.1988,,,,,,,,
+,self-output,llama,mbpp,TRUE,"mbpp-ep3, lr2e-5, rej=100%",lowest,2.92,0,2.92,,0/194,3,165,0.5794,0.5979,0.5608,0.315,,0.802,0.7703,0.1883,,,,,,,,
+,self-output,gemma,mbpp,TRUE,"mbpp-ep3, lr2e-5, rej=0%",lowest,1.54,0,1.54,111,0/147,3,436,0.3995,0.5079,0.5,0.287,,0.7415,0.5625,0.1343,,,,,,,,
+,self-output,gemma,mbpp,TRUE,"mbpp-ep3, lr2e-5, rej=100%",lowest,1.52,0,1.52,111,0/147,3,455,0.3995,0.5079,0.4974,0.284,,0.7423,0.5625,0.1349,,,,,,,,
+,self-output,gemma,mbpp,TRUE,"mbpp-ep3, lr2e-5, rej=51.02%",lowest,1.47,0,1.47,111,0/147,3,456,0.3995,0.5079,0.4894,0.286,,0.7321,0.5641,0.1342,,,,,,,,
+mbpp,,,,FALSE,mbpp answer rate flex range,,,,,,,,,,,,,,,,,,,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep1-easy,lowest,1.78,0,1.78,,0/71,1,189,0.5397,0.5979,0.6005,0.323,,,,,6.08%,0.26%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep1-medium,lowest,1.83,0,1.83,,0/71,1,183,0.5397,0.5979,0.6085,0.33,,,,,6.88%,1.06%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep1-hard,lowest,2,0,2,,0/71,1,207,0.5397,0.5979,0.6402,0.305,,,,,10.05%,4.23%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep1-easy,Q2,3.27,0,3.27,,0/71,1,107,0.5397,0.5979,0.6058,0.322,,,,,,0.79%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep1-medium,Q2,4.43,0,4.43,,0/71,1,92,0.5397,0.5979,0.5952,0.323,,,,,,-0.27%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep1-hard,Q2,2.75,0,2.75,,0/71,1,127,0.5397,0.5979,0.6005,0.314,,,,,,0.26%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep1-easy,highest,6.57,0,6.57,,0/71,1,43,0.5397,0.5979,0.6138,0.333,,,,,7.41%,1.59%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep1-medium*,highest,8.03,0,8.03,,0/71,1,45,0.5397,0.5979,0.172,,,,,,-36.77%,-42.59%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep1-hard,highest,4.73,0,4.73,,0/71,1,96,0.5397,0.5979,0.6138,,,,,,7.41%,1.59%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep1-easy,random,3.5,0,3.5,,0/71,1,94,0.5397,0.5979,0.5952,0.321,,,,,,-0.27%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep1-medium,random,4.16,0,4.16,,0/71,1,96,0.5397,0.5979,0.6085,0.325,,,,,,1.06%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep1-hard,random,2.92,0,2.92,,0/71,1,134,0.5397,0.5979,0.6058,0.312,,,,,,0.79%,,,,,,
+mbpp,,,mbpp,FALSE,mbpp answer rate fix range,,,,,,,,,,,,,,,,,,,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep1-easy,lowest,1.79,0,1.79,255,0/161,1,192,0.5397,0.5979,0.6032,,,,,,6.35%,0.53%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep1-easy,Q2,3.75,0,3.75,255,0/161,1,106,0.5397,0.5979,0.6085,,,,,,6.88%,1.06%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep1-easy,highest,7.07,0,7.07,255,0/161,1,52,0.5397,0.5979,0.6111,,,,,,7.14%,1.32%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep1-hard,lowest,2.08,0,2.08,29,0/52,1,198,0.5397,0.5979,0.6164,,,,,,7.67%,1.85%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep1-hard,Q2,2.66,0,2.66,29,0/52,1,118,0.5397,0.5979,0.5979,,,,,,5.82%,0.00%,,,,,,
+mbpp,self-output,llama,mbpp,FALSE,mbpp-ep1-hard,highest,4.49,0,4.49,29,0/52,1,90,0.5397,0.5979,0.6164,,,,,,7.67%,1.85%,,,,,,
+math,,,,FALSE,bf16:,,,,,,,,,,,,,,,,,,,,,,,,
+math,self-output,llama,math,FALSE,math,lowest,1.99,3.74,1.68537037,100,94/634,0.3154574132,,0.239,0.314,,0.298,,,,,,,5.90%,-1.60%,,,,
+math,self-output,llama,math,FALSE,math,lowest,1.99,3.74,1.68537037,200,94/634,0.6309148265,,0.2176,0.314,,,,,,,,,,,,,,
+math,self-output,llama,math,FALSE,math,Q2,2.57,3.89,2.08637931,100,170/634,0.3154574132,,0.239,0.314,0.6164,0.283,,,,,58.04%,1.85%,4.40%,-3.10%,,,,
+math,self-output,llama,math,FALSE,math,Q2,2.57,3.89,2.08637931,200,170/634,0.6309148265,,0.2176,0.314,0.6138,0.311,,,,,6.09%,1.59%,9.34%,-0.30%,,,,
+math,self-output,llama,math,FALSE,math,highest,3.96,4.01,3.603589744,100,556/634,0.3154574132,,0.239,0.314,0.5979,0.246,,,,,56.19%,0.00%,0.70%,-6.80%,,,,
+math,self-output,llama,math,FALSE,math,highest,3.96,4.01,3.603589744,200,556/634,0.6309148265,,0.2176,0.314,0.5974,0.24,,,,,4.45%,-0.05%,1.87%,-6.40%,,,,
+math,self-output,llama,math,FALSE,4bit:,,,,,,,,,,,,,,,,,,,,,,,,
+math,self-output,llama,math,FALSE,math,lowest,2.53,4.86,1.75,100,1290/3508,0.05701254276,,0.239,0.314,0.5053,0.271,,,0.6687,,46.93%,-9.26%,3.20%,-4.30%,7.85%,-1.62%,5.08%,-10.69%
+math,self-output,llama,math,FALSE,math,lowest,2.53,4.86,1.75,200,1290/3508,0.1140250855,,0.2176,0.314,0.537,0.307,,,,,-1.59%,-6.09%,8.94%,-0.70%,15.52%,-2.22%,,
+math,self-output,llama,math,FALSE,math,Q1,2.89,3.86,1.94,100,1704/3508,0.05701254276,,0.239,0.314,0.5317,0.272,,,0.7422,,49.57%,-6.62%,3.30%,-4.20%,5.12%,-4.35%,12.43%,-3.34%
+math,self-output,llama,math,FALSE,math,Q1,2.89,3.86,1.94,200,1704/3508,0.1140250855,,0.2176,0.314,,,,,,,,,,,14.93%,-2.81%,,
+math,self-output,llama,math,FALSE,math,Q2,2.97,3.85,2.13,100,1714/3508,0.05701254276,,0.239,0.314,0.582,0.287,,,0.771,,54.60%,-1.59%,4.80%,-2.70%,8.19%,-1.28%,15.31%,-0.46%
+math,self-output,llama,math,FALSE,math,Q2,2.97,3.85,2.13,200,1714/3508,0.1140250855,,0.2176,0.314,,,,,,,,,,,17.66%,-0.08%,,
+math,self-output,llama,math,FALSE,math,Q3,3.17,3.86,2.36,100,1900/3508,0.05701254276,,0.239,0.314,0.5794,0.264,,,0.7483,,54.34%,-1.85%,2.50%,-5.00%,9.90%,0.43%,13.04%,-2.73%
+math,self-output,llama,math,FALSE,math,Q3,3.17,3.86,2.36,200,1900/3508,0.1140250855,,0.2176,0.314,,,,,0.7301,,,,,,18.77%,1.03%,20.09%,-4.55%
+math,self-output,llama,math,FALSE,math,highest,4.1,4.15,3.52,100,3243/3508,0.05701254276,,0.239,0.314,0.5476,0.238,,,0.6649,,51.16%,-5.03%,-0.10%,-7.60%,6.66%,-2.81%,4.70%,-11.07%
+math,self-output,llama,math,FALSE,math,highest,4.1,4.15,3.52,200,3243/3508,0.1140250855,,0.2176,0.314,0.5212,0.284,,,0.6391,,-3.17%,-7.67%,6.64%,-3.00%,13.56%,-4.18%,10.99%,-13.65%
+math,self-output,llama,math,FALSE,4 bit remove gt,,,,,,,,,,,,,,,,,,,,,,,,
+math,self-output,llama,math,FALSE,math,lowest,1.75,0,1.75,100,0/2218,0.09017132552,,0.239,0.314,0.5847,0.31,,,0.7862,,54.87%,-1.32%,7.10%,-0.40%,6.91%,1.03%,16.83%,1.06%
+math,self-output,llama,math,FALSE,math,lowest,1.75,0,1.75,200,0/2218,0.180342651,,0.2176,0.314,0.5847,0.307,,,0.7688,,3.18%,-1.32%,8.94%,-0.007,,,15.09%,-0.68%
+math,self-output,llama,math,FALSE,math,Q1,1.94,0,1.94,100,0/1184,0.09017132552,,0.239,0.314,0.6164,0.311,,,0.7748,,58.04%,1.85%,7.20%,-0.30%,5.88%,0.00%,15.69%,-0.08%
+math,self-output,llama,math,FALSE,math,Q1,1.94,0,1.94,200,0/1184,0.180342651,,0.2176,0.314,0.6032,0.322,,,0.7589,,5.03%,0.53%,10.44%,0.80%,,,14.10%,-1.67%
+math,self-output,llama,math,FALSE,math,Q2,2.13,0,2.13,100,0/1796,0.09017132552,,0.239,0.314,0.6217,0.323,,,0.7779,,58.57%,2.38%,8.40%,0.90%,6.91%,1.03%,16.00%,0.23%
+math,self-output,llama,math,FALSE,math,Q2,2.13,0,2.13,200,0/1796,0.180342651,,0.2176,0.314,0.5847,0.323,,,,,3.18%,-1.32%,10.54%,0.90%,,,,
+math,self-output,llama,math,FALSE,math,Q3,2.36,0,2.36,100,0/1608,0.09017132552,,0.239,0.314,0.6243,0.327,,,0.7801,,58.83%,2.64%,8.80%,1.30%,5.29%,-0.59%,16.22%,0.45%
+math,self-output,llama,math,FALSE,math,Q3,2.36,0,2.36,200,0/1608,0.180342651,,0.2176,0.314,0.6111,0.314,,,,,5.82%,1.32%,9.64%,0.00%,,,,
+math,self-output,llama,math,FALSE,math,highest,3.52,0,3.52,100,0/265,0.09017132552,,0.239,0.314,0.5926,0.238,,,0.7635,,55.66%,-0.53%,-0.10%,-7.60%,7.76%,1.88%,14.56%,-1.21%
+math,self-output,llama,math,FALSE,math,highest,3.52,0,3.52,200,0/265,0.180342651,,0.2176,0.314,0.5979,0.284,,,0.787,,4.50%,0.00%,6.64%,-3.00%,,,16.91%,1.14%
+math,self-output,llama,math,FALSE,math,Q2,,,,,,,,,,,,,,,,,,,,,,,
+math,self-output,llama,math,FALSE,math,Q3,,,,,,,,,,,,,,,,,,,,,,,
+math,self-output,llama,math,FALSE,4bit not considering gt at first - setting 3,,,,,,,,,,,,,,,,,,,,,,,,
+math,self-output,llama,math,FALSE,math,lowest,1.76,0,1.76,100,0/2242,0.08920606601,,0.239,0.314,0.6138,0.302,,,0.8021,,57.78%,1.59%,6.30%,-1.20%,11.78%,2.31%,18.42%,2.65%
+math,self-output,llama,math,FALSE,math,lowest,1.76,0,1.76,200,0/2242,0.178412132,,0.2176,0.314,0.5847,0.302,,,0.7248,,3.18%,-1.32%,8.44%,-1.20%,,,19.56%,-5.08%
+math,self-output,llama,math,FALSE,math,Q1,1.97,0,1.97,100,0/2242,0.08920606601,,0.239,0.314,0.6058,0.274,,,,,56.98%,0.79%,3.50%,-4.00%,9.98%,0.51%,,
+math,self-output,llama,math,FALSE,math,Q1,1.97,0,1.97,200,0/2242,0.178412132,,0.2176,0.314,0.6164,0.293,,,,,6.35%,1.85%,7.54%,-2.10%,,,,
+math,self-output,llama,math,FALSE,math,Q2,2.07,0,2.07,100,0/2242,0.08920606601,,0.239,0.314,0.6138,0.295,,,0.7726,,57.78%,1.59%,5.60%,-1.90%,10.50%,1.03%,15.47%,-0.30%
+math,self-output,llama,math,FALSE,math,Q2,2.07,0,2.07,200,0/2242,0.178412132,,0.2176,0.314,0.5979,0.309,,,0.7854,,4.50%,0.00%,9.14%,-0.50%,,,25.62%,0.98%
+math,self-output,llama,math,FALSE,math,Q3,2.21,0,2.21,100,0/2242,0.08920606601,,0.239,0.314,0.6005,0.298,,,0.7642,,56.45%,0.26%,5.90%,-1.60%,11.01%,1.54%,,
+math,self-output,llama,math,FALSE,math,Q3,2.21,0,2.21,200,0/2242,0.178412132,,0.2176,0.314,0.6032,0.304,,,0.7763,,5.03%,0.53%,8.64%,-1.00%,,,,
+math,self-output,llama,math,FALSE,math,highest,2.52,0,2.52,100,0/2242,0.08920606601,,0.239,0.314,0.619,0.272,,,0.7672,,58.30%,2.11%,3.30%,-4.20%,11.61%,2.14%,14.93%,-0.84%
+math,self-output,llama,math,FALSE,math,highest,2.52,0,2.52,200,0/2242,0.178412132,,0.2176,0.314,0.6111,0.306,,,0.7672,,5.82%,1.32%,8.84%,-0.80%,,,23.80%,-0.84%
+math,self-output,llama,math,FALSE,math-ep1,lowest,1.76,0,1.76,561,0/2242,1,,0.209,0.314,0.5714,0.291,0.8183,,0.7483,,,,,-2.30%,,,,
+math,self-output,llama,math,FALSE,math-ep2,lowest,1.76,0,1.76,1122,0/2242,2,,0.233,0.314,0.5979,0.306,0.8166,,0.7824,,,,,-0.80%,,,,
+math,self-output,llama,math,TRUE,math-ep3_lr2e-5,lowest,1.76,0,1.76,1683,0/2242,3,,0.258,0.314,0.6005,0.344,0.82,0.8012,0.7801,0.1988,*ep3 has the highest val acc,,,3.00%,,,,
+math,self-output,llama,math,FALSE,math-ep1,Q1,1.97,0,1.97,561,0/2242,1,,x,0.314,0.5873,x,x,,x,,,,,,,,,
+math,self-output,llama,math,TRUE,math-ep1,Q2,2.07,0,2.07,561,0/2242,1,,0.209,0.314,0.5794,0.265,0.7978,,0.7612,,,,,-4.90%,,,,
+math,self-output,llama,math,FALSE,math-ep2,Q2,2.07,0,2.07,1122,0/2242,1,,0.209,0.314,,,,,0.7627,,,,,-31.40%,,,,
+math,self-output,llama,math,FALSE,math-ep3,Q2,2.07,0,2.07,1122,0/2242,1,,0.209,0.314,,,,,0.7604,,,,,-31.40%,,,,
+math,self-output,llama,math,FALSE,math-ep1,Q3,2.21,0,2.21,561,0/2242,1,,x,0.314,0.5688,0.273,x,,x,,,,,-4.10%,,,,
+math,self-output,llama,math,FALSE,math-ep1,highest,2.52,0,2.52,561,0/2242,1,,0.209,0.314,0.5979,0.287,0.7782,,0.7506,,,,,-2.70%,,,,
+math,self-output,llama,math,TRUE,math-ep2,highest,2.52,0,2.52,1122,0/2242,2,,0.233,0.314,0.6085,0.323,0.8166,,0.7726,,,,,0.90%,,,,
+math,self-output,llama,math,FALSE,math-ep3,highest,2.52,0,2.52,1683,0/2242,3,,,0.314,0.5952,,0.8166,,0.7748,,,,,-31.40%,,,,
+math,self-output,llama,math,FALSE,math-length,shortest,2.42,0,2.42,,0/2242,1,250,0.209,0.314,,,,,,,,,,** see math in-domain sample,,,,
+math,self-output,llama,math,FALSE,math-length,Q2,2.01,0,2.01,,0/2242,1,334,0.209,0.314,,,,,,,,,,,,,,
+math,self-output,llama,math,FALSE,math-length,longest,1.82,0,1.82,,0/2242,1,426,0.209,0.314,,,,,,,,,,,,,,
+math,self-output,mistral,math,FALSE,math-ep1,lowest,1.7,0,1.7,470,0/1880,1,416,0.238,0.172,0.4762,0.188,0.7457,,0.2252,,,,,,,,,
+math,self-output,mistral,math,TRUE,math-ep3,lowest,1.7,0,1.7,1410,0/1880,3,416,0.238,0.172,0.4683,0.194,0.6937,0.7312,0.2396,0.1447,,,,,,,,
+math,self-output,mistral,math,FALSE,math-ep1,Q2,1.92,0,1.92,470,0/1880,1,393,0.238,0.172,,,,,,,,,,,,,,
+math,self-output,mistral,math,FALSE,math-ep1,highest,2.21,0,2.21,470,0/1880,1,314,0.238,0.172,,,,,,,,,,,,,,
+math,self-output,mistral,math,FALSE,math-ep1,rand,1.91,0,1.91,470,0/1880,1,369,0.238,0.172,,,,,,,,,,,,,,
+,self-output,gemma,math,TRUE,math-ep-3,lowest,1.96,0,1.96,1845,0/2458,1,281,0.238,0.172,0.5,0.309,0.7244,0.7295,0.5701,0.1389,,,,,,,,
+math,,,math,FALSE,math rephrase QA setting 3,,,,,,** why 150 is rejected.,,,,,,,,,,,,,,,,,,
+math,rephrase,llama,math,FALSE,math-ep1,lowest,1.78,0,1.78,,0/2079,1,372,0.209,0.314,0.6085,0.307,0.7927,,0.7695,,,1.06%,,-0.70%,,,,
+math,rephrase,llama,math,FALSE,math-ep1,Q2,2.09,0,2.09,,0/2079,1,297,0.209,0.314,0.6032,0.311,0.8251,,0.7824,,,0.53%,,,,,,
+math,rephrase,llama,math,FALSE,math-ep1,highest,2.51,0,2.51,,0/2079,1,261,0.209,0.314,0.5661,0.315,0.8157,,0.7695,,,,,0.10%,,,,
+math,rephrase,llama,math,FALSE,math-ep1,random,2.07,0,2.07,,0/2079,1,307,0.209,0.314,0.6111,0.328,0.8148,,0.7809,,,,,1.40%,,,,
+math,rephrase,llama,math,TRUE,math-ep3,random,2.07,0,2.07,,0/2008,3,307,0.258,0.314,0.6032,0.329,0.8157,0.785,0.7862,0.189,ep3 has the highest val acc,,,1.50%,,,,
+,rephrase,mistral,math,TRUE,math-ep1,random,7.48,0,7.48,,0/2008,1,248,0.238,0.172,0.4974,0.165,0.7457,0.7355,0.2714,0.1799,ep1 has highest val acc,,,,,,,
+,rephrase,gemma,math,TRUE,math-ep-3,random,22.07,0,22.07,1737,0/2314,,208,,,0.4683,0.2,0.7338,0.7338,0.37,0.1258,ep3 has highest val acc,,,,,,,
+arc,,,,FALSE,remove gt - setting 3,*train on 4xa100 so 50 step = 100 step on a100 *2,,,,,,,,,,,,,,,,,,,,,,,
+arc,self-output,llama,arc,FALSE,arc ,lowest,3.45,0,3.45,50,0/300,0.6666666667,,0.791,0.8498,0.6084,,,,0.787,,49.84%,1.05%,,,-79.10%,2.05%,9.94%,1.14%
+arc,self-output,llama,arc,FALSE,arc ,lowest,3.45,0,3.45,100,0/300,1.333333333,,0.8097,0.8498,0.6005,0.335,,,0.7877,,1.58%,0.26%,5.00%,2.10%,-80.97%,1.54%,16.53%,1.21%
+arc,self-output,llama,arc,FALSE,arc ,Q1,5.32,0,5.32,50,0/300,0.6666666667,,0.791,0.8498,0.5979,0.333,,,0.793,,48.79%,0,2.90%,1.90%,-79.10%,1.71%,10.54%,1.74%
+arc,self-output,llama,arc,FALSE,arc ,Q1,5.32,0,5.32,100,0/300,1.333333333,,0.8097,0.8498,0.6243,0.308,,,0.7779,,3.96%,2.64%,2.30%,-0.60%,-80.97%,1.03%,15.55%,0.23%
+arc,self-output,llama,arc,FALSE,arc ,Q2,6.86,0,6.86,50,0/300,0.6666666667,,0.791,0.8498,0.5952,0.299,,,0.7839,,48.52%,-0.27%,-0.50%,-1.50%,-79.10%,1.11%,9.63%,0.83%
+arc,self-output,llama,arc,FALSE,arc ,Q2,6.86,0,6.86,100,0/300,1.333333333,,0.8097,0.8498,0.582,,,,0.787,,-0.27%,-1.59%,,,-80.97%,1.28%,16.46%,1.14%
+arc,self-output,llama,arc,FALSE,arc ,Q3,9.72,0,9.72,50,0/300,0.6666666667,,0.791,0.8498,0.6005,0.328,,,0.7582,,49.05%,0.26%,2.40%,1.40%,-79.10%,0.94%,7.06%,-1.74%
+arc,self-output,llama,arc,FALSE,arc ,Q3,9.72,0,9.72,100,0/300,1.333333333,,0.8097,0.8498,0.6058,0.331,,,0.771,,2.11%,0.79%,4.60%,1.70%,-80.97%,0.43%,14.86%,-0.46%
+arc,self-output,llama,arc,FALSE,arc ,highest,29.84,0,29.84,50,0/300,0.6666666667,,0.791,0.8498,0.5926,,,,0.765,,48.26%,-0.53%,,,-79.10%,-0.42%,7.74%,-1.06%
+arc,self-output,llama,arc,FALSE,arc ,highest,29.84,0,29.84,100,0/300,1.333333333,,0.8097,0.8498,0.6032,0.324,,,0.7657,,1.85%,0.53%,3.90%,1.00%,-80.97%,-0.68%,-4.40%,-8.41%
+arc,self-output,llama,arc,FALSE,remove gt - setting 3,,,,,,,,,,,,,,,,,,,,,0.00%,,,
+arc,self-output,llama,arc,FALSE,arc-ep1,lowest,2.8,0,2.8,272,0/1073,1,215,0.8114,0.8157,0.4894,0.31,0.7833,,0.7733,,** view flip case,,,,-2.81%,-6.65%,,
+arc,self-output,llama,arc,FALSE,arc-ep1_lr2e-5,lowest,2.8,0,2.8,272,0/1073,1,215,0.802,0.8157,0.5397,0.309,0.8046,,0.7794,0.2047,* ep1. has best val accuracy in lowest_lr2e-5,,,,0.26%,80.46%,,
+arc,self-output,llama,arc,FALSE,arc-ep3_lr2e-5,lowest,2.8,0,2.8,816,0/1073,3,215,,,,,0.8012,,,,,,,,80.12%,-1.45%,,
+,self-output,llama,arc,TRUE,"arc-ep, lr2e-5, noCoT, ep3",lowest,5.09,0,5.09,,0/1046,3,91,0.802,0.8157,0.4868,0.311,,0.8183,0.79,0.1988,,,,,,,,
+arc,self-output,llama,arc,FALSE,arc-ep1,Q1,5.32,0,5.32,x,0/300,1,,0.8114,0.8157,x,x,x,,x,,,,,,#VALUE!,#VALUE!,,
+arc,self-output,llama,arc,TRUE,arc-ep1,Q2,4.17,0,4.17,272,0/1073,1,148,0.8114,0.8157,0.5159,0.302,0.8046,,0.7756,,,,,,-0.68%,-1.11%,,
+arc,self-output,llama,arc,FALSE,arc-ep1,Q3,9.72,0,9.72,x,0/300,1,,0.8114,0.8157,x,x,x,,x,,,,,,#VALUE!,#VALUE!,,
+arc,self-output,llama,arc,TRUE,arc-ep1,highest,8.13,0,8.13,272,0/1073,1,95,0.8114,0.8157,0.4365,0.322,0.8131,,0.7938,,,,,,0.17%,-0.26%,,
+arc,self-output,llama,arc,FALSE,arc-ep1,random,4.46,0,4.46,272,0/1073,1,149,0.8114,0.8157,0.4577,0.31,0.802,,WIP,,,,,,-0.94%,-1.37%,,
+arc,self-output,llama,arc,FALSE,arc-ep2,lowest,2.8,0,2.8,544,0/1073,2,215,0.8251,0.8157,0.5079,0.326,0.7969,,0.7824,,,,,,-2.82%,-1.88%,,
+arc,self-output,llama,arc,FALSE,arc-ep2,Q2,4.17,0,4.17,544,0/1073,2,148,0.8251,0.8157,0.4603,WIP,0.8072,,0.7748,,,,,,-1.79%,-0.85%,,
+arc,self-output,llama,arc,FALSE,arc-ep2,highest,8.13,0,8.13,544,0/1073,2,95,0.8251,0.8157,0.3228,0.308,0.8063,,0.7832,,,,,,-1.88%,-0.94%,,
+arc,self-output,llama,arc,FALSE,arc-ep2,random,4.46,0,4.46,544,0/1073,2,149,0.8251,0.8157,0.4868,0.322,0.8217,,WIP,,,,,,-0.34%,0.60%,,
+arc,self-output,llama,arc,FALSE,arc-length,shortest,7.37,0,7.37,272,0/1073,1,85,0.8114,0.8157,0.6138,0.3,,,0.7726,,,,,,-81.14%,-81.57%,,
+arc,self-output,llama,arc,FALSE,arc-length,Q2,4.17,0,4.17,272,0/1073,1,148,0.8114,0.8157,0.582,,,,0.7771,,,,,,-81.14%,-81.57%,,
+arc,self-output,llama,arc,FALSE,arc-length,longest,3.05,0,3.05,272,0/1073,1,238,0.8114,0.8157,0.6058,0.292,,,0.787,,,,,,-81.14%,-81.57%,,
+arc,self-output,llama,arc,FALSE,arc-length,random,4.4,,4.4,272,0/1073,1,152,0.8114,0.8157,,0.322,,,,,,,,,-81.14%,-81.57%,,
+arc,self-output,llama,arc,FALSE,arc-length-ep2,shortest,7.37,0,7.37,544,0/1073,2,85,0.8251,0.8157,0.4153,,0.8055,,,,,,,,-1.96%,-1.02%,,
+arc,self-output,llama,arc,FALSE,arc-length-ep2,longest,3.05,0,3.05,544,0/1073,2,238,0.8251,0.8157,0.4286,,0.7713,,,,,,,,-5.38%,-4.44%,,
+arc,self-output,llama,arc,FALSE,arc-length-ep2,random,4.4,,4.4,544,0/1073,2,152,0.8251,0.8157,0.5212,,0.8038,,,,,,,,-2.13%,-1.19%,,
+arc,self-output,gemma,arc,FALSE,arc-Gemma-2-2b-it,lowest,3.51,0,3.51,265,0/1059,1,198,0.6945,0.7466,0.4788,0.271,0.7398,,0.5193,,,,,,,-0.68%,,
+,self-output,gemma,arc,TRUE,"arc-Gemma-2-2b-it, lr2e-5, noCoT, ep1",lowest,6.34,0,6.34,,0/944,1,147,0.7705,0.7474,0.4974,0.299,,0.7609,0.5792,0.1369,,,,,,,,
+arc,self-output,gemma,arc,FALSE,arc-Gemma-2-2b-it,Q2,4.85,0,4.85,265,0/1059,1,151,0.6945,0.7466,0.4709,0.269,0.7654,,0.4867,,,,,,,1.88%,,
+arc,self-output,gemma,arc,FALSE,arc-Gemma-2-2b-it,highest,7.43,0,7.43,265,0/1059,1,111,0.6945,0.7466,0.4974,0.272,0.7577,,0.5436,,,,,,,1.11%,,
+arc,self-output,gemma,arc,FALSE,arc-Gemma-2-2b-it,random,4.95,0,4.95,265,0/1059,1,156,0.6945,0.7466,0.4815,0.263,0.7517,,0.4754,,,,,,,0.51%,,
+arc,self-output,gemma,arc,FALSE,arc-Gemma-2-2b-it-ep2,lowest,3.51,0,3.51,530,0/1059,2,198,0.7696,0.7466,0.4603,0.272,0.752,,0.5102,0.1258,,,,,#REF!,0.0054,,
+arc,self-output,gemma,arc,FALSE,arc-Gemma-2-2b-it-ep2,Q2,4.85,0,4.85,530,0/1059,2,151,0.7696,0.7466,WIP,0.263,0.7526,,WIP,,,,,,,0.006,,
+arc,self-output,gemma,arc,FALSE,arc-Gemma-2-2b-it-ep2,highest,7.43,0,7.43,530,0/1059,2,111,0.7696,0.7466,WIP,0.27,0.7713,,WIP,,,,,,,0.0247,,
+arc,self-output,gemma,arc,FALSE,arc-Gemma-2-2b-it-ep2,random,4.95,0,4.95,530,0/1059,2,156,0.7696,0.7466,WIP,WIP,0.752,,WIP,,,,,,,0.0054,,
+,self-output,mistral,arc,TRUE,"arc-mistral-7b-it-0.3, lr2e-5, noCoT, ep-2",lowest,13.81,0,13.81,,0/927,2,93,0.6408,0.7901,0.4841,0.184,,0.7184,0.2881,0.0926,,,,,,,,
+arc,self-output,mistral,arc,FALSE,arc-mistral-7b-it-0.3,lowest,4.59,0,4.59,258,0/1022,1,156,0.7235,0.552,0.4709,0.192,0.7526,,0.3995,0.1037,,,,,,20.06%,,
+arc,self-output,mistral,arc,FALSE,arc-mistral-7b-it-0.3,Q2,10.07,0,10.07,258,0/1022,1,96,0.7235,0.552,0.4868,0.171,0.6451,,0.4663,,,,,,,9.31%,,
+arc,self-output,mistral,arc,FALSE,arc-mistral-7b-it-0.3,highest,27.48,0,27.48,258,0/1022,1,61,0.7235,0.552,0.5,0.179,0.7747,,0.5087,,,,,,,22.27%,,
+arc,self-output,mistral,arc,FALSE,arc-mistral-7b-it-0.3,random,10.6,0,10.6,258,0/1022,1,101,0.7235,0.552,0.4974,0.191,0.7474,,0.4109,,,,,,,0.1954,,
+arc,self-output,mistral,arc,FALSE,arc-mistral-7b-it-0.3-ep2,lowest,4.59,0,4.59,516,0/1022,2,156,0.7568,0.552,0.4656,0.177,0.7841,,0.3897,,,,,,,0.2321,,
+arc,self-output,mistral,arc,FALSE,arc-mistral-7b-it-0.3-ep2,Q2,10.07,0,10.07,516,0/1022,2,96,0.7568,0.552,0.5026,0.147,0.7824,,0.4473,,,,,,,0.2304,,
+arc,self-output,mistral,arc,FALSE,arc-mistral-7b-it-0.3-ep2,highest,27.48,0,27.48,516,0/1022,2,61,0.7568,0.552,0.4947,WIP,0.7713,,WIP,,,,,,,0.2193,,
+arc,self-output,mistral,arc,FALSE,arc-mistral-7b-it-0.3-ep2,random,10.6,0,10.6,516,0/1022,2,101,0.7568,0.552,0.5026,WIP,0.7892,,WIP,,,,,,,0.2372,,
+,self-output,mistral,arc,FALSE,arc-mistral-7b-it-0.3-ep2_lr2e-5,lowest,4.59,0,4.59,516,0/1022,2,156,0.7671,0.552,0.4683,0.179,0.663,,0.321,,,,,,,,,
+,self-output,mistral,arc,FALSE,arc-mistral-7b-it-0.3-ep2_lr2e-5,Q2,10.07,0,10.07,516,0/1022,2,96,0.7671,0.552,0.4683,0.177,0.7079,,,,,,,,,,,
+,self-output,mistral,arc,FALSE,arc-mistral-7b-it-0.3-ep2_lr2e-5,highest,27.48,0,27.48,516,0/1022,2,61,0.7671,0.552,0.4815,,0.7457,,,,,,,,,,,
+,self-output,mistral,arc,FALSE,arc-mistral-7b-it-0.3-ep2_lr2e-5,random,10.6,0,10.6,516,0/1022,2,101,0.7671,0.552,0.4841,,0.7218,,,,,,,,,,,
+,,,,FALSE,rephrase QA setting 3,,,,,,,**llama-arc-ep3 has the highest val accuracy in rand,,,,,,,,,,,,,,,,,
+arc,rephrase,llama,arc,FALSE,arc-rephrase-ep1,lowest,3.95,0,3.95,252,0/1007,1,110,0.8114,0.8174,0.627,0.309,0.8362,,0.7483,,,,,,,0.0188,,
+arc,rephrase,llama,arc,FALSE,arc-rephrase-ep1,Q2,5.27,0,5.27,252,0/1007,1,91,0.8114,0.8174,0.619,0.313,0.8345,,0.7498,,,,,,,0.0171,,
+arc,rephrase,llama,arc,FALSE,arc-rephrase-ep1,highest,7.21,0,7.21,252,0/1007,1,78,0.8114,0.8174,0.5952,0.313,0.8319,,0.7703,,,,,,,0.0145,,
+arc,rephrase,llama,arc,FALSE,arc-rephrase-ep1,random,5.27,0,5.27,252,0/1007,1,93,0.8114,0.8174,0.5873,0.313,0.8268,,0.7741,,,,,,,0.0094,,
+arc,rephrase,llama,arc,FALSE,arc-rephrase-ep2,lowest,3.95,0,3.95,504,0/1007,2,110,0.8251,0.8174,0.6005,0.323,0.8336,,0.7665,,,,,,,0.0162,,
+arc,rephrase,llama,arc,FALSE,arc-rephrase-ep2,Q2,5.27,0,5.27,504,0/1007,2,91,0.8251,0.8174,0.6058,0.328,0.8294,,0.7468,,,,,,,0.012,,
+arc,rephrase,llama,arc,FALSE,arc-rephrase-ep2,highest,7.21,0,7.21,504,0/1007,2,78,0.8251,0.8174,0.6085,0.311,0.8311,,0.7665,,,,,,,0.0137,,
+arc,rephrase,llama,arc,FALSE,arc-rephrase-ep2,random,5.27,0,5.27,504,0/1007,2,93,0.8251,0.8174,0.6085,0.325,0.8259,,0.7726,,,,,,,0.0085,,
+arc,rephrase,llama,arc,TRUE,arc-rephrase-ep3,random,5.27,0,5.27,756,0/1007,3,93,0.8251,0.8174,0.6058,0.327,0.8396,0.8345,0.7498,0.1942,,,,,,0.0222,,
+,rephrase,gemma,arc,TRUE,arc-rephrase-ep3,random,15.12,0,15.12,1587,0/1058,3,56,0.6945,0.7466,0.4947,0.276,0.7688,0.7654,0.5216,0.0919,,,,,,,,
+,rephrase,mistral,arc,FALSE,arc-rephrase-ep1,random,16.26,0,16.26,550,0/1100,1,58,0.7235,0.552,,,,,,,,,,,,,,
+,rephrase,mistral,arc,TRUE,arc-rephrase-ep2,random,16.26,0,16.26,1100,0/1100,2,58,0.7671,0.552,0.4974,0.162,0.7884,0.7892,0.4397,0.1479,,,,,,,,
+,rephrase,mistral,arc,FALSE,arc-rephrase-ep3,random,16.26,0,16.26,1650,0/1100,3,58,,0.552,,,,,,,,,,,,,,
+arc,self-output,llama,arc,FALSE,arc answer rate relative range,,,,,,,,,,,,,,,,,,,,,,0,,
+arc,self-output,llama,arc,FALSE,arc-easy,highest,31.5,0,31.5,48,0/192,1,53,0.8294,0.8498,,,,,,,,,,,,-0.8498,,
+arc,self-output,llama,arc,FALSE,arc-medium,highest,33.1,0,33.1,,0/192,1,52,0.8294,0.8498,,,,,,,,,,,,-0.8498,,
+arc,self-output,llama,arc,FALSE,arc-hard,highest,17,0,17,46,0/184,1,85,0.8294,0.8498,,,,,,,,,,,,-0.8498,,
+arc,self-output,llama,arc,FALSE,arc-easy,Q2,7.29,0,7.29,,0/192,1,101,0.8294,0.8498,,,,,,,,,,,,-0.8498,,
+arc,self-output,llama,arc,FALSE,arc-medium,Q2,7.26,0,7.26,,0/192,1,101,0.8294,0.8498,,,,,,,,,,,,-0.8498,,
+arc,self-output,llama,arc,FALSE,arc-hard,Q2,5.62,0,5.62,,0/184,1,140,0.8294,0.8498,,,,,,,,,,,,-0.8498,,
+arc,self-output,llama,arc,FALSE,arc-easy,lowest,3.55,0,3.55,48,0/192,1,188,0.8294,0.8498,,,,,,,,,,,,-0.8498,,
+arc,self-output,llama,arc,FALSE,arc-medium,lowest,3.45,0,3.45,46,0/192,1,199,0.8294,0.8498,,,,,,,,,,,,-0.8498,,
+arc,self-output,llama,arc,FALSE,arc-hard,lowest,3.25,0,3.25,48,0/184,1,223,0.8294,0.8498,,,,,,,,,,,,-0.8498,,
+arc,self-output,llama,arc,FALSE,arc answer rate fix range,,,,,,,,,,,,,,,,,,,,,,0,,
+arc,self-output,llama,arc,FALSE,arc-easy,highest,29.38,0,29.38,,0/52,1,57,0.8294,0.8498,,,,,,,,,,,,-0.8498,,
+arc,self-output,llama,arc,FALSE,arc-hard,highest,9.45,0,9.45,,0/52,1,115,0.8294,0.8498,,,,,,,,,,,,-0.8498,,
+arc,self-output,llama,arc,FALSE,arc-easy,Q2,6.95,0,6.95,,0/52,1,108,0.8294,0.8498,,,,,,,,,,,,-0.8498,,
+arc,self-output,llama,arc,FALSE,arc-hard,Q2,4.92,0,4.92,,0/52,1,165,0.8294,0.8498,,,,,,,,,,,,-0.8498,,
+arc,self-output,llama,arc,FALSE,arc-easy,lowest,3.41,0,3.41,,0/52,1,199,0.8294,0.8498,,,,,,,,,,,,-0.8498,,
+arc,self-output,llama,arc,FALSE,arc-hard,lowest,3.47,0,3.47,,0/52,1,235,0.8294,0.8498,,,,,,,,,,,,-0.8498,,

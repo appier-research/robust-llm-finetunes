@@ -102,7 +102,7 @@ def main(load_adapter, base_model="unsloth/llama-3-8b-Instruct-bnb-4bit",
         oai_correct_cnt = 0
         correct_cnt = 0
         for split in ['train','validation','test']:
-            dataset = load_dataset("arrow", data_files={"validation":f"dataset/ground_truth/mbpp/{split}/data-00000-of-00001.arrow"}, split=split )
+            dataset = load_dataset("arrow", data_files={split:f"dataset/ground_truth/mbpp/{split}/data-00000-of-00001.arrow"}, split=split )
             print(split)
             with tqdm(total=len(dataset), dynamic_ncols=True) as pbar:
                 for idx, row in enumerate(dataset):

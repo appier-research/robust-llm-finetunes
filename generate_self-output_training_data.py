@@ -397,7 +397,7 @@ def main(args):
     avg_len = []
     rej_rate = []
     base_model_name = base_model.replace('/','-').replace('.','-').lower()
-    path = f'dataset/self-output/{task}/{base_model_name}-lowest-ppl'
+    path = f'dataset/{args.mode}/{task}/{base_model_name}-lowest-ppl'
     if args.rejection == 'incorrect':
         path +='_incorrect'
     elif args.rejection == 'lowest_all_correct': 

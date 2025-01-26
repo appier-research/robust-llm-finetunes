@@ -6,7 +6,7 @@ python train_with_mask.py --learning_rate 2e-4 --threshold -1
 """
 import os
 import argparse
-from datasets import load_dataset
+from datasets import load_dataset, load_from_disk
 from trl import SFTTrainer
 from trl.trainer import SFTConfig
 from peft import LoraConfig
@@ -39,8 +39,8 @@ args_cli = parser.parse_args()
 model_name = args_cli.model_name
 target_model = args_cli.target_model
 dataset_name = args_cli.dataset
-data_path = os.path.join('dataset/stm/',model_path.replace('/','-').replace('.','-')+'_'+dataset_name)
-dataset = load_dataset(data_path, split="train")
+data_path = os.path.join('dataset/stm/',target_model.replace('/','-').replace('.','-')+'_'+dataset_name)
+dataset = load_from_disk(data_path)
 
 #multi-gpu training setup
 device_string = PartialState().process_index
@@ -65,7 +65,7 @@ args = SFTConfig(output_dir="trained_models/"+f"{model_name}_{dataset_name}_conf
     learning_rate=args_cli.learning_rate,  # Use command line argument
     save_strategy="epoch",
     save_steps=1,
-    per_device_train_batch_size=4,
+    per_device_train_batch_size=2,
     gradient_accumulation_steps=1,
     warmup_steps=10,
     logging_steps=1,
