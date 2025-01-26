@@ -8,7 +8,6 @@ import json
 from pathlib import Path
 import datetime
 import argparse
-from .ds1000_utils import execution
 from datasets import load_dataset
 from transformers import pipeline
 from .normalization import gsm8k_normalizer
@@ -178,7 +177,7 @@ def validate_checkpoint(load_adapter,
         few_shot=8
     ):
     import glob
-    dataset = load_dataset("appier-ai-research/robust-finetuning", "gsm8k-convo", split="validation")
+    dataset = load_dataset("arrow", data_files={"validation":"dataset/ground_truth/gsm8k/data-00000-of-00001.arrow"})["validation"]
 
     checkpoint2scores = {}
     for checkpoint in glob.glob(load_adapter):

@@ -1,0 +1,74 @@
+{
+  "builder_name": "parquet",
+  "citation": "",
+  "config_name": "gsm8k-convo",
+  "dataset_name": "robust-finetuning",
+  "dataset_size": 12281604,
+  "description": "",
+  "download_checksums": {
+    "hf://datasets/appier-ai-research/robust-finetuning@cbaf933e3c6aa70307f7637b959c8045dfd84912/gsm8k-convo/train-00000-of-00001.parquet": {
+      "num_bytes": 4210980,
+      "checksum": null
+    },
+    "hf://datasets/appier-ai-research/robust-finetuning@cbaf933e3c6aa70307f7637b959c8045dfd84912/gsm8k-convo/validation-00000-of-00001.parquet": {
+      "num_bytes": 469299,
+      "checksum": null
+    },
+    "hf://datasets/appier-ai-research/robust-finetuning@cbaf933e3c6aa70307f7637b959c8045dfd84912/gsm8k-convo/test-00000-of-00001.parquet": {
+      "num_bytes": 848343,
+      "checksum": null
+    }
+  },
+  "download_size": 5528622,
+  "features": {
+    "conversations": [
+      {
+        "from": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "value": {
+          "dtype": "string",
+          "_type": "Value"
+        }
+      }
+    ],
+    "question": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "answer": {
+      "dtype": "string",
+      "_type": "Value"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 17810226,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 9375996,
+      "num_examples": 6726,
+      "dataset_name": "robust-finetuning"
+    },
+    "validation": {
+      "name": "validation",
+      "num_bytes": 1038917,
+      "num_examples": 747,
+      "dataset_name": "robust-finetuning"
+    },
+    "test": {
+      "name": "test",
+      "num_bytes": 1866691,
+      "num_examples": 1319,
+      "dataset_name": "robust-finetuning"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}

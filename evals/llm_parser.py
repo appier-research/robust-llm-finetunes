@@ -164,7 +164,10 @@ class Bench(ABC):
 
     def __init__(self, config: dict):
         self.config = config
-        self.dataset = load_dataset(self.DATASET_PATH, self.DATASET_NAME)
+        if 'gsm8k' in self.DATASET_PATH:
+            self.dataset = load_dataset("arrow", data_files={"test":self.DATASET_PATH, "validation":self.DATASET_PATH})
+        else:
+            self.dataset = load_dataset(self.DATASET_PATH, self.DATASET_NAME)
         self.use_wandb = False
         self.n_correct = 0
         self.references = []
@@ -231,7 +234,7 @@ class Bench(ABC):
 
 class GSM8KBench(Bench):
     """Benchmark for the GSM8K dataset."""
-    DATASET_PATH = "appier-ai-research/robust-finetuning"
+    DATASET_PATH = "dataset/ground_truth/gsm8k"
     DATASET_NAME = "gsm8k"
     EVAL_LLM = "gpt-4o-mini-2024-07-18"  # for extracting the answer from LLMs' raw output
 

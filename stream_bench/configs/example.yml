@@ -5,4 +5,4 @@ llm:
   model_name: "meta-llama/Meta-Llama-3-8B-Instruct"
   temperature: 0.0
   max_tokens: 512
-  load_adapter: "trained_models/checkpoint-50"
+  load_adapter: "ttrained_models/llama3_mbpp_config_lr2e-05_t2.5/checkpoint-94"
