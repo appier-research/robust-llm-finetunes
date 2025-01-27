@@ -1,5 +1,6 @@
 # What Makes LLM Fine-tuning Robust? A Study of Token Perplexity
-### TLDR: We propose Selective masking token (STM), a simple yet effective way to filter high ppl tokens from huamn styled training data to sustain in-domain training and out-of-domain performance at the same time, identifying the one of the root of performance degradation after fine-tuning.
+### TLDR: 
+#### We propose Selective masking token (STM), a simple yet effective way to filter high ppl tokens from huamn styled training data to sustain in-domain training and out-of-domain performance at the same time, identifying the one of the root of performance degradation after fine-tuning.
 ## To started with...
 ### Environment setup
 - some basic commands to establish a training/inference envionment:
@@ -79,4 +80,13 @@ python -m stream_bench.pipelines.run_bench     --agent_cfg "configs/agents/examp
 # Citation
 ### If you find our work helpful, please cite as
 ```
+@misc{wu2025clearmindsthinkalike,
+      title={Clear Minds Think Alike: What Makes LLM Fine-tuning Robust? A Study of Token Perplexity}, 
+      author={Chao-Chung Wu and Zhi Rui Tam and Chieh-Yen Lin and Hung-yi Lee and Yun-Nung Chen},
+      year={2025},
+      eprint={2501.14315},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2501.14315}, 
+}
 ```
