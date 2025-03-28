@@ -51,7 +51,7 @@ def create_unique_filename(base_name, extension):
 def main(load_adapter, few_shot=0, resume=None, 
     base_model="unsloth/llama-3-8b-Instruct-bnb-4bit", 
     torch_dtype=None, run_val=False):
-    if run_val and '*' in load_adapter:
+    if run_val and load_adapter and '*' in load_adapter:
         validate_checkpoint(load_adapter, base_model=base_model, torch_dtype=torch_dtype, few_shot=few_shot)
         return 2
     if run_val:

@@ -113,7 +113,7 @@ def main(load_adapter, resume=None, base_model=None, torch_dtype=None, sanity_ch
                     pbar.update(1)
                     pbar.set_description("[pass={:.2f}]".format(100*correct_cnt/total))
         return None
-    dataset = dataset['test']
+    # dataset = dataset['test']
     if 'gpt' in base_model:
         load_adapter = "openai_"+base_model
     else:

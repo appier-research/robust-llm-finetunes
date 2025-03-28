@@ -45,8 +45,10 @@ def validate_checkpoint(load_adapter,
                             device_map='cuda', torch_dtype=torch.bfloat16)
         else:
             pipe = pipeline("text-generation", base_model, device_map='cuda')
-        print(checkpoint)
-        pipe.model.load_adapter(checkpoint)
+        
+        if checkpoint:
+            print(checkpoint)
+            pipe.model.load_adapter(checkpoint)
         total = 0
         correct_cnt = 0
         for idx, row in enumerate(dataset):
