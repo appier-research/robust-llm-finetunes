@@ -11,7 +11,37 @@ import argparse
 from datasets import load_dataset
 from transformers import pipeline
 from .normalization import gsm8k_normalizer
+# from together import Together
 
+def use_custom_gpt4(messages, model_name):
+    client = OpenAI(api_key=os.environ['OPENAI_API_KEY'] , organization=os.environ['OPENAI_ORGANIZATION'])
+    # client = Together(api_key=os.environ["TOGETHER_API_KEY"])
+    response = client.chat.completions.create(
+      model=model_name,
+      messages=messages,
+      temperature=1,
+      max_tokens=512,
+      top_p=1,
+      frequency_penalty=0,
+      presence_penalty=0
+    ).choices[0].message.content
+    return response
+
+def use_nim_api(message):
+    client = OpenAI(
+      base_url = "https://integrate.api.nvidia.com/v1",
+      api_key = "api-key"
+    )
+    
+    completion = client.chat.completions.create(
+      model="qwen/qwen2-7b-instruct",
+      messages=message,
+      temperature=0,
+      top_p=0.95,
+      max_tokens=4096
+    ).choices[0].message.content
+    return completion
+    
 
 def extract_ans_from_response(answer: str, eos=None):
     if eos:
@@ -74,14 +104,21 @@ def main(load_adapter, few_shot=0, resume=None,
             log_dir.mkdir(exist_ok=True)
 
     dataset = load_dataset("openai/gsm8k", "main")
-    if torch_dtype=='bf16':
-        pipe = pipeline("text-generation", base_model, device_map='auto', torch_dtype=torch.bfloat16)
-    else:
-        pipe = pipeline("text-generation", base_model)
-    if load_adapter:
-        pipe.model.load_adapter(load_adapter)
-    else:
+    if "gpt" in base_model:
+        load_adapter = "openai_"+base_model
+        pipe = None
+    elif  "nim" in base_model:
         load_adapter = base_model
+        pipe = None
+    else:
+        if torch_dtype=='bf16':
+            pipe = pipeline("text-generation", base_model, device_map='auto', torch_dtype=torch.bfloat16)
+        else:
+            pipe = pipeline("text-generation", base_model)
+        if load_adapter:
+            pipe.model.load_adapter(load_adapter)
+        else:
+            load_adapter = base_model
     # if 'mistral' in base_model:
     #     from transformers import AutoTokenizer
     #     tokenizer = AutoTokenizer.from_pretrained(base_model)
@@ -138,7 +175,13 @@ def main(load_adapter, few_shot=0, resume=None,
             #     from transformers import AutoTokenizer
             #     tokenizer = AutoTokenizer.from_pretrained(base_model)
             #     messages = tokenizer.apply_chat_template(messages, tokenize=False)
-            generation = pipe(messages, max_new_tokens=512)[0]['generated_text'][-1]['content']
+            if pipe:
+                generation = pipe(messages, max_new_tokens=512)[0]['generated_text'][-1]['content']
+            else:
+                if "gpt-" in base_model:
+                    generation = use_custom_gpt4(messages, base_model.replace("gpt-", ""))
+                else:
+                     generation = use_nim_api(messages)
             failed_format = 0
             if '#### ' not in generation:
                 failed_format = 1

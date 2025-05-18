@@ -88,8 +88,9 @@ class CustomizedDataCollatorForChatML:
         prompts_input_ids = []
         prompt_attention_mask = []
         labels = []
-
+        # print(examples)
         for example in examples:
+            # print("\n\n")
             # print(example)
             formatted_prompt = example.get(self.prompt_key, None)
             if formatted_prompt is None:

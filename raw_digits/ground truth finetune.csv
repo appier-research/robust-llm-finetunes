@@ -1,20 +1,29 @@
-model,selected,name,gt data,MBPP - test,GSM8k - test (0-shot CoT),MATH - test (0-shot CoT),arc_challenge-test (CoT),arc_challenge-test (noCoT),bird-test,
-llama3-8b-it-mbpp-merged-lora-32_20240807-step100,FALSE,llama,mbpp,0.5308,0.45109,0.2373,0.6049,,,x
-llama3-8b-it-mbpp-merged-lora-32_20240807-ep3,TRUE,llama,mbpp,0.5794,0.185,0.233,0.5913,0.6049,0.176,best val acc
-"llama3-8b-lora-arc-ep-checkpoint-280, lr=2e-5",FALSE,llama,arc,0.619,0.5291,0.291,0.802,,,x
-"llama3-8b-lora-arc-ep-checkpoint-840, lr=2e-5",TRUE,llama,arc,0.6164,0.7058,0.313,0.8063,0.814,0.189,best val acc
-llama3-8b-lora-arc-ep-checkpoint-280,FALSE,llama,arc,0.4788,0.02047,0.119,0.814,,,x
-"llama3-8-it-math-lora-32_20240807-ste1692-ep3, lr=2e-5",TRUE,llama,math,0.5873,0.6793,0.258,0.3951,0.4863,0.1942,best val acc
-llama3-8-it-math-lora-32_20240807-ste1692,FALSE,llama,math,0.5397,0.373768,0.209,0.7014,,,x
-"gemma2-2b-lora-mbpp-ep1,",TRUE,gemma,mbpp,0.3995,0.1926,0.229,0.6954,0.7159,0.0514,best val acc
-gemma2-2b-lora-arc-ep/checkpoint-280,FALSE,gemma,arc,0.2302,0.0152,0.133,0.6945,,,
-gemma2-2b-lora-arc-ep2 checkpoint-560,TRUE,gemma,arc,0.3254,0.0258,0.165,0.7747,0.7705,0.1082,best val acc
-"gemma2-2b-lora-math-ep, ep2 (checkpoint-3384)",TRUE,gemma,math,0.4577,0.1903,0.217,0.2952,0.3098,0.1245,best val acc
-"mistral-7b-lora-arc-ep1, lr=2e-5",FALSE,mistral,arc,0.4788,0.0819,0.114,0.7671,,,
-"mistral-7b-lora-arc-ep2, lr=2e-5",TRUE,mistral,arc,0.4815,0.0728,0.1,0.7986,0.7961,0.1669,best val acc
-mistral-7b-lora-arc-ep,FALSE,mistral,arc,0.4815,0.0667,0.124,0.7568,,,
-"mistral-7b-lora-math-ep1, lr=2e-5",TRUE,mistral,math,0.4709,0,0.167,0.2645,0.3498,0.1851,best val acc
-"mistral-7b-lora-math-ep3, lr=2e-5",FALSE,mistral,math,0.455,0.0015,0.169,0.1416,,,
-"mistral-7b-lora-mbpp-ep1, lr=2e-5",TRUE,mistral,mbpp,0.455,0.3685,0.122,0.6672,0.6826,0.1617,best val acc
-"mistral-7b-lora-mbpp-ep2, lr=2e-5",FALSE,mistral,mbpp,0.4497,0.4033,0.182,0.6596,,,
-"mistral-7b-lora-mbpp-ep3,  lr=2e-5",FALSE,mistral,mbpp,0.4471,0.3988,0.129,0.663,,,
+model,selected,name,gt data,MBPP - test,GSM8k - test (0-shot CoT),MATH - test (0-shot CoT),arc_challenge-test (CoT),arc_challenge-test (noCoT),bird-test,safety,BWT,improve,-original_model!E6,ppl
+llama3-8b-it-mbpp-merged-lora-32_20240807-step100,FALSE,llama,mbpp,0.5308,0.45109,0.2373,0.6049,,,,,,x,
+llama3-8b-it-mbpp-merged-lora-32_20240807-ep3,TRUE,llama,mbpp,0.5794,0.185,0.233,0.5913,0.6049,0.176,,-34.71%,-2.23%,best val acc,
+"llama3-8b-it-mbpp, gt remove gemma27b failed case",FALSE,llama,mbpp,0.6164,0.7854,0.315,,0.7892,0.1962,,-0.47%,4.02%,,
+"llama3-8b-lora-arc-ep-checkpoint-280, lr=2e-5",FALSE,llama,arc,0.619,0.5291,0.291,0.802,,,,,,x,
+"llama3-8b-lora-arc-ep-checkpoint-840, lr=2e-5",TRUE,llama,arc,0.6164,0.7058,0.313,0.8063,0.814,0.189,,,,best val acc,
+llama3-8b-lora-arc-ep-checkpoint-280,FALSE,llama,arc,0.4788,0.02047,0.119,0.814,,,,,,x,
+"llama3-8-it-math-lora-32_20240807-ste1692-ep3, lr=2e-5",TRUE,llama,math,0.5873,0.6793,0.258,0.3951,0.4863,0.1942,,-14.12%,-17.83%,best val acc,
+llama3-8-it-math-lora-32_20240807-ste1692,FALSE,llama,math,0.5397,0.373768,0.209,0.7014,,,,,,x,
+"llama3 ( t = -1 ), KL coef 0.00001",,llama,math,0.5741,0.699,0.266,0.4241,,,,-3.12%,-15.29%,,
+"llama3 ( t = -1 ), KL coef 0.00001",,llama,mbpp,0.5344,,0.289,,,,,,-9.82%,,
+"gemma2-2b-lora-mbpp-ep1,",TRUE,gemma,mbpp,0.3995,0.1926,0.229,0.6954,0.7159,0.0514,,-38.19%,-21.76%,best val acc,8.2896
+gemma2-2b-lora-arc-ep/checkpoint-280,FALSE,gemma,arc,0.2302,0.0152,0.133,0.6945,,,,,,,
+gemma2-2b-lora-arc-ep2 checkpoint-560,TRUE,gemma,arc,0.3254,0.0258,0.165,0.7747,0.7705,0.1082,,,,best val acc,
+"gemma2-2b-lora-math-ep, ep2 (checkpoint-3384)",TRUE,gemma,math,0.4577,0.1903,0.217,0.2952,0.3098,0.1245,,-36.68%,-22.78%,best val acc,
+gemma2-9b-lora-mbpp-ep.ep3,TRUE,gemma,mbpp,0.6148,0.8544,0.497,,0.8976,0.2568,,1.69%,,,--> lora rank and alpha could be larger.
+"mistral-7b-lora-arc-ep1, lr=2e-5",FALSE,mistral,arc,0.4788,0.0819,0.114,0.7671,,,,,,,
+"mistral-7b-lora-arc-ep2, lr=2e-5",TRUE,mistral,arc,0.4815,0.0728,0.1,0.7986,0.7961,0.1669,,,,best val acc,
+mistral-7b-lora-arc-ep,FALSE,mistral,arc,0.4815,0.0667,0.124,0.7568,,,,,,,
+"mistral-7b-lora-math-ep1, lr=2e-5",TRUE,mistral,math,0.4709,0,0.167,0.2645,0.3498,0.1851,,-26.13%,,best val acc,
+"mistral-7b-lora-math-ep3, lr=2e-5",FALSE,mistral,math,0.455,0.0015,0.169,0.1416,,,,,,,
+"mistral-7b-lora-mbpp-ep1, lr=2e-5",TRUE,mistral,mbpp,0.455,0.3685,0.122,0.6672,0.6826,0.1617,,4.92%,,best val acc,
+"mistral-7b-lora-mbpp-ep2, lr=2e-5",FALSE,mistral,mbpp,0.4497,0.4033,0.182,0.6596,,,,,,,
+"mistral-7b-lora-mbpp-ep3,  lr=2e-5",FALSE,mistral,mbpp,0.4471,0.3988,0.129,0.663,,,,,,,
+,,,,,,,,,,,,,,
+gpt-4o-08-06,,gpt-4o,mbpp,0.7249,,,,,,,,,,
+qwen-2.5-7B-it-bird-ep3,TRUE,qwen2.5 7B,bird,0.6667,0.881,0.583,,0.8908,0.2679,,0.73%,-0.0118,,
+"omlo_bird_config_lr2e-05, t=-1, ep3",TRUE,allenai/OLMo-2-1124-7B-Instruct,bird,0.3889,0.7718,0.384,,0.6647,0.1538,,-5.29%,0.0684,,
+"omlo-sft_bird_config_lr2e-05, t=-1, ep3",TRUE,allenai/OLMo-2-1124-7B-SFT,bird,0.4101,0.2343,0.335,,0.7287,0.179,,-15.84%,0.106,,
