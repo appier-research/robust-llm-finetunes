@@ -1,6 +1,6 @@
-# What Makes LLM Fine-tuning Robust? A Study of Token Perplexity
+# Mitigating Forgetting in LLM Fine-Tuning via Low-Perplexity Token Learning
 ### TLDR: 
-#### We propose Selective masking token (STM), a simple yet effective way to filter high ppl tokens from huamn styled training data to sustain in-domain training and out-of-domain performance at the same time, identifying the one of the root of performance degradation after fine-tuning.
+#### We propose Selective masking token (STM), a simple yet effective way to filter high ppl tokens from huamn styled training data to sustain target task training and non-target task performance at the same time, identifying the one of the root of performance degradation after fine-tuning.
 ## To started with...
 ### Environment setup
 - some basic commands to establish a training/inference envionment:
@@ -35,7 +35,7 @@ python3 generate_stm_training_data.py --base_model meta-llama/Meta-Llama-3-8B-In
 ```
 The data should be stored ar `dataset/self-output`, `dataset/stm`, `dataset/rephrase`. (We already made MBPP dataset)
 ## Training of tasks
-### ruhn all traininf for self-output, rephrase, gt and stm data with Llama3-8B Instruct on MBPP task
+### run all traininf for self-output, rephrase, gt and stm data with Llama3-8B Instruct on MBPP task
 - first create an axolotl training config as training/mbpp-gt.yml
 - you need to specify the training data path, base model, lora settings, training settings like learning rate, epochs...etc (we have provide our setting in training/mbpp-gt.yml)
 - and modify `example_training_so_re_gt.sh` to add your training config then run
@@ -80,13 +80,5 @@ python -m stream_bench.pipelines.run_bench     --agent_cfg "configs/agents/examp
 # Citation (already submitted before adding arxiv link)
 ### If you find our work helpful, please cite as
 ```
-@misc{wu2025clearmindsthinkalike,
-      title={Clear Minds Think Alike: What Makes LLM Fine-tuning Robust? A Study of Token Perplexity}, 
-      author={Chao-Chung Wu and Zhi Rui Tam and Chieh-Yen Lin and Hung-yi Lee and Yun-Nung Chen},
-      year={2025},
-      eprint={2501.14315},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL},
-      url={https://arxiv.org/abs/2501.14315}, 
-}
+{placeholder}
 ```
