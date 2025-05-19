@@ -35,7 +35,7 @@ python3 generate_stm_training_data.py --base_model meta-llama/Meta-Llama-3-8B-In
 ```
 The data should be stored ar `dataset/self-output`, `dataset/stm`, `dataset/rephrase`. (We already made MBPP dataset)
 ## Training of tasks
-### run all traininf for self-output, rephrase, gt and stm data with Llama3-8B Instruct on MBPP task
+### run all training for self-output, rephrase, gt and stm data with Llama3-8B Instruct on MBPP task
 - first create an axolotl training config as training/mbpp-gt.yml
 - you need to specify the training data path, base model, lora settings, training settings like learning rate, epochs...etc (we have provide our setting in training/mbpp-gt.yml)
 - and modify `example_training_so_re_gt.sh` to add your training config then run
