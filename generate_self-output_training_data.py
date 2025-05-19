@@ -10,7 +10,7 @@ import argparse
 from transformers import pipeline
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from datasets import load_dataset, Dataset, DatasetDict
-from utils import calculate_perplexity
+from utils import calculate_perplexity, calculate_token_metrics_with_surprisal
 from utils import normalize_extracted_answer, normalize_response
 from typing import Dict, List, Union
 from openai import OpenAI
@@ -23,7 +23,7 @@ PROMPT_TEMPLATE = """Below are an instruction that describes a task along with a
 {original_response}
 ### Response:"""
 
-def gen_mbpp_sample(args, pipe, base_name, temp=0.7, samples=32, split="train"):
+def gen_mbpp_sample(args, pipe, base_name, temp=0.7, samples=1, split="train"):
     from evals.humaneval_utils.executor import check_correctness
     def extract_code(text):
         pattern = r'```(?:python)?\s*(.*?)```?'
@@ -59,16 +59,32 @@ def gen_mbpp_sample(args, pipe, base_name, temp=0.7, samples=32, split="train"):
         response = row['conversations'][1]['value']
         gt_answer = {'content': row['conversations'][1]['value'], 'src': 'ground_truth', 'correct': True, 'order': -1 }
         
-        if pipe:
+        if pipe and "gpt" in base_name:
+            generations = [pipe.chat.completions.create(
+                model=base_name,
+                messages = messages,
+                temperature=0,
+            )]
+        elif pipe and "27b" in base_name:
+            generations = [pipe.chat.completions.create(
+                model="google/gemma-2-27b-it",
+                messages = messages,
+                temperature=0,
+            )]
+        else:
             generations = pipe([messages]*samples, max_new_tokens=512,
                 top_p=0.95,
                 temperature=temp,
                 do_sample=True
             )
-        # print(generations)
+        print(generations)
+        # generations = [row['conversations'][1]['value']]
         for idx, gen in enumerate(generations):
-            if pipe:
+            if pipe and "gpt" not in base_name and "27b" not in base_name:
                 generation = gen[0]['generated_text'][-1]['content']
+            else:
+                generation = gen.choices[0].message.content
+    
             # generation = gen
             print(gen)
             failed = False
@@ -116,7 +132,7 @@ def gen_mbpp_sample(args, pipe, base_name, temp=0.7, samples=32, split="train"):
             f.write(json.dumps(row)+'\n')
     return output_filename
 
-def groq_math_sample(args, pipe, base_name, temp=0.7, split='train', samples=16):
+def groq_math_sample(args, pipe, base_name, temp=0.7, split='train', samples=1):
     from evals.normalization import math_normalizer
     from evals.openai_sampler import ChatCompletionSampler
     from evals.common import check_equality
@@ -175,9 +191,10 @@ Remember to put your answer on its own line after "Answer:", and you do not need
             tokenize=False,
             add_generation_prompt=True
         )
-        sub_size = 8
+        sub_size = 1
         for _ in range(sub_size):
             model_inputs = tokenizer([text_chat]*(samples//sub_size), return_tensors="pt").to(model.device)
+            # generations = [row['conversations'][1]['content']]
             generated_ids = model.generate(
                 **model_inputs,
                 max_new_tokens=512,
@@ -199,7 +216,7 @@ Remember to put your answer on its own line after "Answer:", and you do not need
                 correct = float(check_equality(mini_sampler, gold, pred))
                 sample = {
                     'content': pred_response,
-                    'src': base_model,
+                    'src': base_name,
                     'correct': correct,
                     'order': idx
                 }
@@ -224,10 +241,96 @@ Remember to put your answer on its own line after "Answer:", and you do not need
             f.write(json.dumps(row)+'\n')
     return output_filename
 
+
+def gt_bird(args, pipe, base_name, temp=0.7, split='train', samples=16):
+    base_postfix = base_name.split("/")[-1]
+    print('BIRD')
+    dataset = "dataset/ground_truth/bird"
+    dataset = load_dataset("arrow", data_files={f"{split}":os.path.join(dataset,f"{split}/data-00000-of-00001.arrow")})[split]
+    output_filename = f'dataset/{args.mode}/bird-t2_{base_postfix}_dpo_sample_{split}_t_{temp}.jsonl'
+    added = set()
+    if os.path.exists(output_filename):
+        with open(output_filename, 'r') as f:
+            for line in f:
+                payload = json.loads(line)
+                added.add(payload['row_id'])
+    print(len(added))
+
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+    tokenizer = AutoTokenizer.from_pretrained(base_name)
+    model = AutoModelForCausalLM.from_pretrained(
+                base_name,
+                torch_dtype=torch.bfloat16,
+                use_flash_attention_2=True,
+                device_map="cuda"
+            )
+    for row_id, row in tqdm(enumerate(dataset)):
+        if row_id in added:
+            continue
+        # print(row.keys())
+        problem = row['conversations'][0]["content"]
+        test_question = problem
+
+
+        gt_answer = {
+            'content': row['conversations'][1]['content'],
+            'src': 'ground_truth',
+            'correct': True,
+            'order': -1
+        }
+        negative_samples = []
+        positive_samples = []
+        messages = [{ 'role': 'user', 'content': test_question } ]
+        response = row['conversations'][1]['content']
+        idx = 0
+        text_chat = tokenizer.apply_chat_template(
+            messages,
+            tokenize=False,
+            add_generation_prompt=True
+        )
+        sub_size = 1
+        for _ in range(sub_size):
+            generations = [row['conversations'][1]['content']]
+            for idx, gen in enumerate(generations):
+                # use this if its pipe
+                # pred_response = gen[0]['generated_text'][-1]['content']
+                
+                pred_response = gen
+                correct = 1
+                sample = {
+                    'content': pred_response,
+                    'src': base_name,
+                    'correct': correct,
+                    'order': idx
+                }
+                if correct > 0:
+                    positive_samples.append(sample)
+                else:
+                    negative_samples.append(sample)
+
+        # we do not found correct answer, use original prompt as ground truth
+        if len(positive_samples) == 0:
+            positive_samples = [ gt_answer ]
+            negative_samples = negative_samples
+        else:
+            positive_samples.append(gt_answer)
+        row = {
+            'instruction': row['conversations'][0]['content'],
+            'accept': positive_samples,
+            'rejection': negative_samples,
+            'row_id': row_id
+        }
+        with open(output_filename, 'a') as f:
+            f.write(json.dumps(row)+'\n')
+    return output_filename
+    
+
 def cal_ppl_file(args, file= "test.jsonl", base_model=""):
     output_filename= file.replace('.jsonl', '_wrejppl.jsonl')
     print(base_model, file, output_filename)
     train = pd.read_json(file, lines=True)
+    if "gpt" in base_model or "27b" in base_model: # calculate ppl  for larger models' generation to train Llama3-8B it
+        base_model = "meta-llama/Meta-Llama-3-8B-Instruct"
     tokenizer = AutoTokenizer.from_pretrained(base_model)
     model = AutoModelForCausalLM.from_pretrained(base_model, torch_dtype=torch.bfloat16, device_map='cuda')
     for ind,row in tqdm(train.iterrows()):
@@ -258,27 +361,46 @@ def cal_ppl_file(args, file= "test.jsonl", base_model=""):
             row['rejection']=REJECT
         with open(output_filename, 'a') as f:
             f.write(json.dumps(row)+'\n')
+            
 def main(args):
     start = time.time()
     base_model = args.base_model
     task =args.task
-    tokenizer = AutoTokenizer.from_pretrained(base_model)
+    if "gpt"  in base_model:
+        tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct")
+    else:
+        tokenizer = AutoTokenizer.from_pretrained(base_model)
     if args.mode=='self-output':
-        nsamples=32
+        nsamples=1
     else:
         nsamples=1
     if task=='mbpp':
-        pipe = pipeline("text-generation",
+        if "gpt" in base_model or "27b" in base_model:
+            if "gpt" in base_model:
+                pipe = client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
+            elif "27b" in base_model: #google/gemma-2-27b-it
+                pipe = client = OpenAI(api_key=os.environ['TOGETHER_API_KEY'], base_url="https://api.together.xyz/v1",)
+        else:
+            pipe = pipeline("text-generation",
                     base_model,
                     device_map='auto',
                     torch_dtype=torch.bfloat16
                     )
+        # train_file = "dataset/rephrase/mbpp_gpt-4o-mini_sample_train_t_0.7_1.jsonl"
+        # train_file = "dataset/rephrase/mbpp_gpt-4o-mini_sample_train_t_0.7_1.jsonl"
+        # train_file = gen_mbpp_sample(args, pipe, base_model, temp=0.7, samples=nsamples, split="train")
         train_file = gen_mbpp_sample(args, pipe, base_model, temp=0.7, samples=nsamples, split="train")
+        # val_file = "dataset/rephrase/mbpp_gpt-4o-mini_sample_validation_t_0.7_1.jsonl"
+        # val_file = "dataset/rephrase/mbpp_gpt-4o-mini_sample_validation_t_0.7_1.jsonl"
         val_file = gen_mbpp_sample(args, pipe, base_model, temp=0.7, samples=nsamples, split="validation")
     elif task=='math':
         pipe = None
         train_file = groq_math_sample(args, pipe, base_model, temp=0.7, samples=nsamples, split="train")
         val_file = groq_math_sample(args, pipe, base_model, temp=0.7, samples=nsamples, split="validation")
+    elif task =="bird":
+        pipe=None
+        train_file = gt_bird(args, pipe, base_model, temp=0.7, samples=nsamples, split="train")
+        val_file = gt_bird(args, pipe, base_model, temp=0.7, samples=nsamples, split="validation")
     print('finish self-generating, elasped time:', time.time()-start)
     start =time.time()
     for file in [train_file, val_file]:
@@ -390,7 +512,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run the model with an optional adapter.")
     parser.add_argument("--mode", type=str, help="mode for self-output or rephrase", default="self-output", choices=["self-output", "rephrase"])
     parser.add_argument("--base_model", type=str, help="Path to the model to load", default="meta-llama/Meta-Llama-3-8B-Instruct")
-    parser.add_argument("--task", type=str, help="Path to the model to load", default="mbpp", choices=['mbpp', 'math'])
+    parser.add_argument("--task", type=str, help="Path to the model to load", default="mbpp", choices=['mbpp', 'math', 'bird'])
     parser.add_argument("--rejection", type=str, help="Path to the model to load", default="None", choices = ["None", "lowest_all_correct", "incorrect", "random"])
     args = parser.parse_args()
     
