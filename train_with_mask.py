@@ -79,7 +79,7 @@ peft_config = LoraConfig(
     use_dora=True,
 )
 threshold = str(args_cli.threshold).replace(".","-")
-args = SFTConfig(output_dir="/workspace/sharing/johnsonwu/trained_models/"+f"{model_name}_{dataset_name}_config_lr{args_cli.learning_rate}_t{threshold}",
+args = SFTConfig(output_dir=f"{model_name}_{dataset_name}_config_lr{args_cli.learning_rate}_t{threshold}",
     gradient_checkpointing=True,
     num_train_epochs = 3,
     learning_rate=args_cli.learning_rate,  # Use command line argument
