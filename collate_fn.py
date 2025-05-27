@@ -71,6 +71,7 @@ class CustomizedDataCollatorForChatML:
     ignore_index: int = -100
     max_length: int = None
     prompt_key: str = "prompt"
+    apply: str = "highest"
     messages_key: str = "conversations"
     threshold : float = 2.5
 
@@ -87,8 +88,9 @@ class CustomizedDataCollatorForChatML:
         prompts_input_ids = []
         prompt_attention_mask = []
         labels = []
-
+        # print(examples)
         for example in examples:
+            # print("\n\n")
             # print(example)
             formatted_prompt = example.get(self.prompt_key, None)
             if formatted_prompt is None:
@@ -147,7 +149,24 @@ class CustomizedDataCollatorForChatML:
                 # print(completion_ppl >self.threshold)
                 # print(len(label))
                 # print(self.tokenizer.decode(input_ids[-1]))
-                label[completion_ppl > self.threshold] = self.ignore_index
+                
+                if self.apply=="random":
+                    import random
+                    random.seed(42)
+                    cnt = sum(completion_ppl > self.threshold)
+                    samplen = random.choices(range(len(label)),k=cnt)
+                    label[samplen] = self.ignore_index
+                elif self.apply=="lowest":
+                    # cnt = sum(completion_ppl > self.threshold)
+                    # # print(cnt, len(completion_ppl))
+                    # d = dict([(ind, val) for ind, val in enumerate(completion_ppl)])
+                    # samplen = sorted(d, key = lambda x: d[x], reverse=False)[:cnt]
+                    # label[samplen] = self.ignore_index
+                    label[completion_ppl < self.threshold] = self.ignore_index
+                elif self.apply=="highest":
+                    label[completion_ppl > self.threshold] = self.ignore_index
+                else:
+                    label = torch.tensor(label, dtype=torch.long)
             else:
                 label = torch.tensor(label, dtype=torch.long)
 

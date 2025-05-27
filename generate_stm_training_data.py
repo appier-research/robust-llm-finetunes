@@ -40,12 +40,36 @@ def calculate_token_metrics_with_surprisal(logits, target_ids):
     return perplexity_per_token.float().cpu().numpy(), loss_per_token.float().cpu().numpy()
 
 
+def templated(p):
+    # print(p)
+    question, choices, answerKey = p["question"], p["choices"], p["answerKey"]
+    
+    choice = [l+'. '+t for t, l in zip(choices['text'],choices['label'])]
+    # print(choice, answerKey)
+    q = 'Question:\n'+question
+    c = "Choices:\n"+'\n'.join(choice)
+    a = choice[ord(answerKey)-ord(choices['label'][0])]
+    question_text=q+c
+    messages = [
+            { 'role': 'user', 'content': "Answer the following multiple choice question. The last line of your response should be of the following format: 'Answer: $LETTER' (without quotes) where LETTER is one of ABCD.\n"+question_text+"\n" }
+        ]
+    #remove "Think step by step before answering." before question text
+    pair = {
+        "conversations": 
+            #[
+            #    {"role": "system", "content": "Please read the question and choices, and then choose one correct answer option from the choices."},
+            #    {"role": "user", "content": q+c }
+            #]
+        messages
+    }
+    return pair, (a, answerKey)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run the model with an optional adapter.")
     parser.add_argument("--base_model", type=str, help="Path to the model to load", default="meta-llama/Meta-Llama-3-8B-Instruct")
-    parser.add_argument("--task", type=str, help="Task data to generate stm training data", default="mbpp", choices=['mbpp', 'math'])
+    parser.add_argument("--task", type=str, help="Task data to generate stm training data", default="mbpp", choices=['mbpp', 'math', 'arc_challenge', "bird"])
     parser.add_argument("--stm", type=str, help="Whether or not to apply stm data alternatives", default="None", choices=['None','stm_dpf', 'dpf'])
-    parser.add_argument("--stm_adapter", type=str, help="Path to the adapter to load for stm filters", choices=['stm_dpf', 'dpf'])
+    parser.add_argument("--stm_adapter", type=str, help="Path to the adapter to load for stm filters")
     args = parser.parse_args()
     model_path = args.base_model
     task = args.task
@@ -57,12 +81,18 @@ if __name__ == "__main__":
     messages_key = 'conversations'
     dataset = load_dataset("arrow", data_files={"train": f"dataset/ground_truth/{task}/train/data-00000-of-00001.arrow"})['train']
     output_file = model_path.replace('/','-').replace('.','-') + '_'+ task
-    if args.stm:
-        output_file +'_'+args.stm
+    if args.stm!="None":
+        output_file +='_'+args.stm
     data = []
     for example in tqdm(dataset, dynamic_ncols=True):
-        prompt = example[messages_key][0]
-        prompt = [ {'role': 'user', 'content': prompt['value']} ]
+        try:
+            prompt = example[messages_key][0]
+            prompt = [ {'role': 'user', 'content': prompt['value']} ]
+        except:
+            prompt, _ = templated(example)
+            example[messages_key] = prompt
+            prompt = prompt[0]
+        
         # prompt = [ {'role': 'user', 'content': prompt['content']} ]
         formatted_prompt = tokenizer.apply_chat_template(
             prompt, tokenize=False, add_generation_prompt=True

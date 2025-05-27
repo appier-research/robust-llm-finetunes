@@ -12,7 +12,7 @@ from transformers import pipeline
 from .common import check_equality, ANSWER_PATTERN
 from .openai_sampler import ChatCompletionSampler
 from .normalization import math_normalizer
-
+# from together import Together
 
 QUERY_TEMPLATE = """
 Solve the following math problem step by step. The last line of your response should be of the form Answer: $ANSWER (without quotes) where $ANSWER is the answer to the problem.
@@ -72,9 +72,40 @@ def validate_checkpoint(load_adapter,
     with open('logging/math-val/validation.jsonl', "a") as fout:
             fout.write(json.dumps(checkpoint2scores)+'\n')
 
+def use_custom_gpt4(messages, model_name):
+    client = OpenAI(api_key=os.environ['OPENAI_API_KEY'] , organization=os.environ['OPENAI_ORGANIZATION'])
+    # client = Together(api_key=os.environ["TOGETHER_API_KEY"])
+    response = client.chat.completions.create(
+      model=model_name,
+      messages=messages,
+      temperature=1,
+      max_tokens=512,
+      top_p=1,
+      frequency_penalty=0,
+      presence_penalty=0
+    ).choices[0].message.content
+    return response
+
+
+def use_nim_api(message):
+    client = OpenAI(
+      base_url = "https://integrate.api.nvidia.com/v1",
+      api_key = "api-key"
+    )
+    
+    completion = client.chat.completions.create(
+      model="qwen/qwen2-7b-instruct",
+      messages=message,
+      temperature=0,
+      top_p=0.95,
+      max_tokens=4096
+    ).choices[0].message.content
+    return completion
+
+
 def main(load_adapter, few_shot=0, resume=None, base_model="unsloth/llama-3-8b-Instruct-bnb-4bit", 
             torch_dtype=None, run_val=False, sanity_check=False):
-    if run_val and '*' in load_adapter:
+    if run_val and load_adapter and '*' in load_adapter:
         validate_checkpoint(load_adapter, base_model=base_model, torch_dtype=torch_dtype)
         return 2
     if run_val:
@@ -96,7 +127,7 @@ def main(load_adapter, few_shot=0, resume=None, base_model="unsloth/llama-3-8b-I
             log_dir = Path("logging/math-test-{}".format(few_shot))
             log_dir.mkdir(exist_ok=True)
 
-        dataset = load_dataset("arrow", data_files={"train":"dataset/ground_truth/math/train/data-00000-of-00001.arrow","validation":"dataset/ground_truth/math/validation/data-00000-of-00001.arrow", "test":"dataset/ground_truth/math/test/data-00000-of-00001.arrow"})
+    dataset = load_dataset("arrow", data_files={"train":"dataset/ground_truth/math/train/data-00000-of-00001.arrow","validation":"dataset/ground_truth/math/validation/data-00000-of-00001.arrow", "test":"dataset/ground_truth/math/test/data-00000-of-00001.arrow"})
     if sanity_check:
         total = 0
         oai_correct_cnt = 0
@@ -118,8 +149,12 @@ def main(load_adapter, few_shot=0, resume=None, base_model="unsloth/llama-3-8b-I
                     pbar.update(1)
                     pbar.set_description("[pass={:.2f}]".format(100*correct_cnt/total))
         return None
-    if 'gpt' in base_model:
+    if 'gpt-' in base_model:
         load_adapter = "openai_"+base_model
+        pipe=None
+    elif "nim-" in base_model:
+        load_adapter = base_model
+        pipe=None
     else:
         if torch_dtype=='bf16':
             pipe = pipeline("text-generation", base_model, device_map='auto', torch_dtype=torch.bfloat16)
@@ -178,7 +213,14 @@ def main(load_adapter, few_shot=0, resume=None, base_model="unsloth/llama-3-8b-I
             messages = [
                 {"role": "user", "content": test_question},
             ]
-            generation = pipe(messages, max_new_tokens=512)[0]['generated_text'][-1]['content']
+            if "gpt" in base_model or "nim" in base_model:
+                if "gpt-" in base_model:
+                    generation = use_custom_gpt4(messages, base_model.replace("gpt-", ""))
+                else:
+                    generation = use_nim_api(messages)
+                    
+            else:
+                generation = pipe(messages, max_new_tokens=512)[0]['generated_text'][-1]['content']
             match = re.search(ANSWER_PATTERN, generation)
             extracted_answer = match.group(1) if match else math_normalizer(generation)
             gold = math_normalizer(row['solution'])

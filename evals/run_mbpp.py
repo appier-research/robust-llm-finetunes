@@ -11,7 +11,40 @@ import argparse
 from datasets import load_dataset
 from transformers import pipeline
 from .humaneval_utils.executor import check_correctness
+from openai import OpenAI
+# from together import Together
+
 prefix_instruct = "Please refer the given test cases and generate a python function for my problem. Make sure the written code is wrapped in code block : ```python\n<your code>\n```\n"
+
+def use_custom_gpt4(messages, model_name):
+    client = OpenAI(api_key=os.environ['OPENAI_API_KEY'] , organization=os.environ['OPENAI_ORGANIZATION'])
+    # client = Together(api_key=os.environ["TOGETHER_API_KEY"])
+    response = client.chat.completions.create(
+      model=model_name,
+      messages=messages,
+      temperature=1,
+      max_tokens=512,
+      top_p=1,
+      frequency_penalty=0,
+      presence_penalty=0
+    ).choices[0].message.content
+    return response
+
+def use_nim_api(message):
+    client = OpenAI(
+      base_url = "https://integrate.api.nvidia.com/v1",
+      api_key = "api-key"
+    )
+    
+    completion = client.chat.completions.create(
+      model="qwen/qwen2-7b-instruct",
+      messages=message,
+      temperature=0,
+      top_p=0.95,
+      max_tokens=4096
+    ).choices[0].message.content
+    return completion
+
 
 def create_unique_filename(base_name, extension):
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -45,8 +78,10 @@ def validate_checkpoint(load_adapter,
                             device_map='cuda', torch_dtype=torch.bfloat16)
         else:
             pipe = pipeline("text-generation", base_model, device_map='cuda')
-        print(checkpoint)
-        pipe.model.load_adapter(checkpoint)
+        
+        if checkpoint:
+            print(checkpoint)
+            pipe.model.load_adapter(checkpoint)
         total = 0
         correct_cnt = 0
         for idx, row in enumerate(dataset):
@@ -118,17 +153,22 @@ def main(load_adapter, base_model="unsloth/llama-3-8b-Instruct-bnb-4bit",
                     pbar.update(1)
                     pbar.set_description("[pass={:.2f}]".format(100*correct_cnt/total))
         return None
-
-    if torch_dtype=='bf16':
-        pipe = pipeline("text-generation", base_model, device_map='auto', torch_dtype=torch.bfloat16)
-    else:
-        pipe = pipeline("text-generation", base_model)
-    if load_adapter:
-        
-        # pipe.resize_token_embeddings(len(tokenizer))
-        pipe.model.load_adapter(load_adapter)
-    else:
+    if 'gpt' in base_model:
+        load_adapter = "openai_"+base_model
+        pipe=None
+    elif "nim" in base_model:
         load_adapter = base_model
+        pipe=None
+    else:
+        if torch_dtype=='bf16':
+            pipe = pipeline("text-generation", base_model, device_map='auto', torch_dtype=torch.bfloat16)
+        else:
+            pipe = pipeline("text-generation", base_model)
+        if load_adapter:
+            # pipe.resize_token_embeddings(len(tokenizer))
+            pipe.model.load_adapter(load_adapter)
+        else:
+            load_adapter = base_model
     # if 'mistral' in base_model:
     #     from transformers import AutoTokenizer
     #     tokenizer = AutoTokenizer.from_pretrained(base_model)
@@ -180,7 +220,15 @@ def main(load_adapter, base_model="unsloth/llama-3-8b-Instruct-bnb-4bit",
             #     from transformers import AutoTokenizer
             #     tokenizer = AutoTokenizer.from_pretrained(base_model)
             #     messages = tokenizer.apply_chat_template(messages, tokenize=False)
-            generation = pipe(messages, max_new_tokens=1024)[0]['generated_text'][-1]['content']
+            if pipe:
+                generation = pipe(messages, max_new_tokens=1024)[0]['generated_text'][-1]['content']
+            else:
+                if "gpt-" in base_model:
+                    generation = use_custom_gpt4(messages, base_model.replace("gpt-", ""))
+                elif "nim-" in base_model:
+                    generation = use_nim_api(messages)
+                else:   
+                    generation = use_custom_gpt4(messages, base_model)
             try:
                 match = extract_code(generation)[0].rstrip()
             except Exception as e:

@@ -2,6 +2,7 @@ import re
 import os
 import json
 import torch
+import torch.nn.functional as F 
 
 def calculate_perplexity(text, model, tokenizer):
     encodings = tokenizer(text, return_tensors="pt").to('cuda')
@@ -33,6 +34,43 @@ def calculate_perplexity(text, model, tokenizer):
     ppl = torch.exp(torch.stack(nlls).sum() / end_loc)
     return ppl.item()
 
+def calculate_token_metrics_with_surprisal(text, model, tokenizer):
+    """
+    Calculate per-token perplexity and entropy
+    
+    Args:
+        logits: Model output logits of shape [prefix_len, vocab_size]
+        target_ids: Target token ids
+        prefix_len: Length of the sequence to analyze
+    
+    Returns:
+        token_ppls: Per-token perplexity
+        token_entropy: Per-token entropy
+    """
+    encodings = tokenizer(text, return_tensors="pt").to('cuda')
+    with torch.no_grad():
+        input_ids =encodings.input_ids[:,:-1].to('cuda')
+        target_ids= encodings.input_ids[:,1:].to('cuda')
+        logits = model(input_ids, labels=target_ids)
+        # print(logits.logits.shape, input_ids.shape, len(text))
+    # Get the relevant logits and targets
+    logits_len = len(logits.logits)
+    # logits = logits[prefix_len:, :]
+    # targets = target_ids[0, prefix_len:]
+    
+    # Get logits and shift them to align with targets
+    shift_logits = logits.logits[..., :-1, :].contiguous()
+    shift_labels = target_ids[..., 1:].contiguous()
+    # Calculate loss per token (using CrossEntropyLoss)
+    loss_per_token = F.cross_entropy(
+        shift_logits.view(-1, shift_logits.size(-1)),
+        shift_labels.view(-1),
+        reduction='none'
+    ).view(shift_labels.size())
+    perplexity_per_token = torch.exp(loss_per_token.float())
+
+    return perplexity_per_token.float().cpu().numpy().tolist()
+    
 def normalize_response(response: str) -> str:
     """
     Normalize the response by removing markdown and LaTeX formatting that may prevent a match.
