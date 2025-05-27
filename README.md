@@ -80,5 +80,13 @@ python -m stream_bench.pipelines.run_bench     --agent_cfg "configs/agents/examp
 # Citation (already submitted before adding arxiv link)
 ### If you find our work helpful, please cite as
 ```
-{placeholder}
+@misc{wu2025mitigatingforgettingllmfinetuning,
+      title={Mitigating Forgetting in LLM Fine-Tuning via Low-Perplexity Token Learning}, 
+      author={Chao-Chung Wu and Zhi Rui Tam and Chieh-Yen Lin and Yun-Nung Chen and Shao-Hua Sun and Hung-yi Lee},
+      year={2025},
+      eprint={2501.14315},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2501.14315}, 
+}
 ```
