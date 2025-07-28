@@ -6,7 +6,7 @@ from typing import List
 from tqdm import tqdm
 from datasets import load_dataset
 from llms.sglang_inference import SGLangInference
-from .mmlu_utils import write_jsonl, normalize_extracted_answer, normalize_response, evaluate_response, write_final_log
+from .utils import write_jsonl, normalize_extracted_answer, normalize_response, evaluate_response, write_final_log
 
 BASELINE_PROMPT = """Answer the following multiple choice question. The last line of your response should be of the following format: 'Answer: $LETTER' (without quotes) where LETTER is one of ABCD. Think step by step before answering.
 
@@ -170,11 +170,37 @@ def eval_dataset(llm, subject_name, mode="baseline", leetspeak=False, split='tes
     return stats['hit'], stats['total'], stats['correct'], stats['negative_markings']
 
 VALID_DATASETS = [
-        'anatomy', 'business_ethics', 'clinical_knowledge', 'college_chemistry', 'college_computer_science', 'college_mathematics', 'college_medicine', 'college_physics',
-        'conceptual_physics', 'econometrics', 'electrical_engineering', 'formal_logic', 'global_facts', 'high_school_chemistry', 'high_school_geography', 'high_school_macroeconomics',
-        'high_school_mathematics', 'high_school_physics', 'high_school_statistics', 'high_school_us_history', 'human_aging', 'logical_fallacies',
-        'machine_learning', 'miscellaneous', 'philosophy', 'professional_accounting', 'professional_law', 'public_relations', 'virology', 'astronomy'
-    ]
+   "anatomy",
+   "astronomy", 
+   "business_ethics",
+   "clinical_knowledge",
+   "college_chemistry",
+   "college_computer_science",
+   "college_mathematics",
+   "college_medicine",
+   "college_physics",
+   "conceptual_physics",
+   "econometrics",
+   "electrical_engineering",
+   "formal_logic",
+   "global_facts",
+   "high_school_chemistry",
+   "high_school_geography",
+   "high_school_macroeconomics",
+   "high_school_mathematics",
+   "high_school_physics",
+   "high_school_statistics",
+   "high_school_us_history",
+   "human_aging",
+   "logical_fallacies",
+   "machine_learning",
+   "miscellaneous",
+   "philosophy",
+   "professional_accounting",
+   "professional_law",
+   "public_relations",
+   "virology"
+]
 
 def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Evaluate LLM on MMLU datasets")
