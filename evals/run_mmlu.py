@@ -6,7 +6,7 @@ from typing import List
 from tqdm import tqdm
 from datasets import load_dataset
 from llms.sglang_inference import SGLangInference
-from .utils import write_jsonl, normalize_extracted_answer, normalize_response, evaluate_response, write_final_log
+from .mmlu_utils import write_jsonl, normalize_extracted_answer, normalize_response, evaluate_response, write_final_log
 
 BASELINE_PROMPT = """Answer the following multiple choice question. The last line of your response should be of the following format: 'Answer: $LETTER' (without quotes) where LETTER is one of ABCD. Think step by step before answering.
 
