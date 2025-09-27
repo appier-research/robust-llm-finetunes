@@ -72,6 +72,7 @@ class CustomizedDataCollatorForChatML:
     max_length: int = None
     prompt_key: str = "prompt"
     apply: str = "highest"
+    output_ppl: bool = False
     messages_key: str = "conversations"
     threshold : float = 2.5
 
@@ -88,29 +89,28 @@ class CustomizedDataCollatorForChatML:
         prompts_input_ids = []
         prompt_attention_mask = []
         labels = []
-        # print(examples)
+        completion_ppl_list = []  # NEW
+
         for example in examples:
-            # print("\n\n")
-            # print(example)
             formatted_prompt = example.get(self.prompt_key, None)
             if formatted_prompt is None:
-                # print('format prompt is None')
                 prompt = example[self.messages_key][:-1]
                 if 'from' in prompt[0]:
-                    prompt = [ {'role': 'user' if r['from'] == 'human' else 'assistant', 'content': r['value']} for r in prompt]
+                    prompt = [{'role': 'user' if r['from'] == 'human' else 'assistant', 'content': r['value']} for r in prompt]
                 formatted_prompt = self.tokenizer.apply_chat_template(
                     prompt, tokenize=False, add_generation_prompt=True
                 )
+
             if 'input_ids' in example:
                 del example['input_ids']
+
             if "input_ids" not in example:
                 message = example[self.messages_key]
                 if 'from' in message[0]:
-                    message = [ {'role': 'user' if r['from'] == 'human' else 'assistant', 'content': r['value']} for r in message]
+                    message = [{'role': 'user' if r['from'] == 'human' else 'assistant', 'content': r['value']} for r in message]
                 formatted_message = self.tokenizer.apply_chat_template(
                     message, tokenize=False, add_generation_prompt=False
                 )
-                # print(formatted_message)
                 tokenized_message = self.tokenizer(
                     formatted_message,
                     truncation=True,
@@ -137,43 +137,40 @@ class CustomizedDataCollatorForChatML:
             prompts_input_ids.append(tokenized_prompt["input_ids"])
             prompt_attention_mask.append(tokenized_prompt["attention_mask"])
 
-            # Create the labels that will have all but the completion tokens of the example["input_ids"] set to ignore_index
+            # labels: ignore prompt, keep completion
             label = [self.ignore_index] * len(input_ids[-1])
-            # print(len(input_ids[-1]))
             completion_start_idx = len(tokenized_prompt["input_ids"])
             label[completion_start_idx:] = input_ids[-1][completion_start_idx:]
-            if self.threshold > 0:
-                completion_ppl = torch.from_numpy(np.array(example['ppl']))
-                # print(len(completion_ppl))
-                label = torch.tensor(label, dtype=torch.long)
-                # print(completion_ppl >self.threshold)
-                # print(len(label))
-                # print(self.tokenizer.decode(input_ids[-1]))
-                
-                if self.apply=="random":
-                    import random
-                    random.seed(42)
-                    cnt = sum(completion_ppl > self.threshold)
-                    samplen = random.choices(range(len(label)),k=cnt)
-                    label[samplen] = self.ignore_index
-                elif self.apply=="lowest":
-                    # cnt = sum(completion_ppl > self.threshold)
-                    # # print(cnt, len(completion_ppl))
-                    # d = dict([(ind, val) for ind, val in enumerate(completion_ppl)])
-                    # samplen = sorted(d, key = lambda x: d[x], reverse=False)[:cnt]
-                    # label[samplen] = self.ignore_index
-                    label[completion_ppl < self.threshold] = self.ignore_index
-                elif self.apply=="highest":
-                    label[completion_ppl > self.threshold] = self.ignore_index
-                else:
-                    label = torch.tensor(label, dtype=torch.long)
-            else:
-                label = torch.tensor(label, dtype=torch.long)
+            label = torch.tensor(label, dtype=torch.long)
+
+            # NEW: build per-token completion_ppl aligned to full seq; NaN elsewhere
+            full_len = len(input_ids[-1])
+            ppl_vec = torch.full((full_len,), float('nan'), dtype=torch.float)
+
+            if 'ppl' in example and example['ppl'] is not None:
+                completion_ppl = torch.from_numpy(np.array(example['ppl'], dtype=np.float32))
+                end_idx = min(full_len, completion_start_idx + len(completion_ppl))
+                put_len = max(0, end_idx - completion_start_idx)
+                if put_len > 0:
+                    ppl_vec[completion_start_idx:end_idx] = completion_ppl[:put_len]
+
+                if self.threshold > 0:
+                    if self.apply == "random":
+                        import random
+                        random.seed(42)
+                        cnt = int((completion_ppl > self.threshold).sum().item())
+                        if cnt > 0:
+                            samplen = random.choices(range(len(label)), k=cnt)
+                            label[samplen] = self.ignore_index
+                    elif self.apply == "lowest":
+                        label[completion_start_idx:end_idx][completion_ppl[:put_len] < self.threshold] = self.ignore_index
+                    elif self.apply == "highest":
+                        label[completion_start_idx:end_idx][completion_ppl[:put_len] > self.threshold] = self.ignore_index
 
             labels.append(label)
+            completion_ppl_list.append(ppl_vec)
 
-                
-        # convert to list of tensors and pad
+        # to tensors + left pad
         input_ids = [torch.tensor(ids, dtype=torch.long) for ids in input_ids]
         attention_mask = [torch.tensor(mask, dtype=torch.long) for mask in attention_mask]
         input_ids = pad(input_ids, padding_side="left", padding_value=self.tokenizer.pad_token_id)
@@ -185,13 +182,19 @@ class CustomizedDataCollatorForChatML:
         prompts_input_ids = pad(prompts_input_ids, padding_side="left", padding_value=self.tokenizer.pad_token_id)
         prompt_attention_mask = pad(prompt_attention_mask, padding_side="left", padding_value=0)
 
-        return {
-            "input_ids": input_ids,
-            "attention_mask": attention_mask,
-            "labels": labels,
-            "prompts": prompts_input_ids,
-            "prompt_attention_mask": prompt_attention_mask,
+        # NEW: left-pad completion_ppl with NaN so it’s easy to mask later
+        completion_ppl = pad(completion_ppl_list, padding_side="left", padding_value=float('nan'))
+        output_result = {
+                "input_ids": input_ids,
+                "attention_mask": attention_mask,
+                "labels": labels,
+                "prompts": prompts_input_ids,
+                "prompt_attention_mask": prompt_attention_mask
         }
+
+        if self.output_ppl:
+            output_result["completion_ppl"] = completion_ppl
+        return output_result
 
 if __name__ == "__main__":
     from transformers import AutoTokenizer, AutoModelForCausalLM
