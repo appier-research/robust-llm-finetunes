@@ -22,40 +22,6 @@ from typing import Any, Literal, Optional, Union
 from accelerate import PartialState
 import deepspeed
 
-def selective_log_softmax(logits, index):
-    """
-    A memory-efficient implementation of the common `log_softmax -> gather` operation.
-
-    This function is equivalent to the following naive implementation:
-    ```python
-    logps = torch.gather(logits.log_softmax(-1), dim=-1, index=index.unsqueeze(-1)).squeeze(-1)
-    ```
-
-    Args:
-        logits (`torch.Tensor`):
-            Logits tensor of shape `(..., num_classes)`.
-        index (`torch.Tensor`):
-            Index tensor of shape `(...)`, specifying the positions to gather from the log-softmax output.
-
-    Returns:
-        `torch.Tensor`:
-            Gathered log probabilities with the same shape as `index`.
-    """
-    if logits.dtype in [torch.float32, torch.float64]:
-        selected_logits = torch.gather(logits, dim=-1, index=index.unsqueeze(-1)).squeeze(-1)
-        # loop to reduce peak mem consumption
-        logsumexp_values = torch.stack([torch.logsumexp(lg, dim=-1) for lg in logits])
-        per_token_logps = selected_logits - logsumexp_values  # log_softmax(x_i) = x_i - logsumexp(x)
-    else:
-        # logsumexp approach is unstable with bfloat16, fall back to slightly less efficent approach
-        per_token_logps = []
-        for row_logits, row_labels in zip(logits, index):  # loop to reduce peak mem consumption
-            row_logps = F.log_softmax(row_logits, dim=-1)
-            row_per_token_logps = row_logps.gather(dim=-1, index=row_labels.unsqueeze(-1)).squeeze(-1)
-            per_token_logps.append(row_per_token_logps)
-        per_token_logps = torch.stack(per_token_logps)
-    return per_token_logps
-
 def _low_ppl_weights(ppl: torch.Tensor, tau: float = 0.75) -> torch.Tensor:
     """
     Monotone decreasing soft weights with maximum at ppl=1:
@@ -64,14 +30,13 @@ def _low_ppl_weights(ppl: torch.Tensor, tau: float = 0.75) -> torch.Tensor:
       ppl: per-token perplexity (can contain NaNs for masked tokens)
       tau: width of the bump (smaller -> learn only very low-ppl tokens)
     """
-    x = ppl.to(dtype=torch.float32)
-    return torch.exp(-((x - 1.0) / tau) ** 2)
+    return torch.exp(-((ppl - 1.0) / tau) ** 2)
 
 class PeftWithLowPPLFocus(PeftModelForCausalLM):
     ppl_tau: float = 0.75  # tune this
 
     def forward(self, *args: Any, **kwargs: Any):
-        labels: torch.Tensor = kwargs['labels']
+        labels = kwargs['labels']
         completion_ppl = kwargs.pop('completion_ppl', None)
 
         # Forward for logits
@@ -80,28 +45,31 @@ class PeftWithLowPPLFocus(PeftModelForCausalLM):
 
         # Valid-token mask
         mask = (labels != -100)  # (B, T)
+        logits = logits[:, :-1, :]        # (B, T-1, V)
+        labels = labels[:, 1:]            # (B, T-1)
+        mask   = mask[:, 1:]              # align with labels
+        completion_ppl = completion_ppl[:, 1:]
 
         # Per-token NLL on valid positions
         flat_logits = logits[mask]          # (N_valid, V)
         flat_labels = labels[mask]          # (N_valid,)
         # print(completion_ppl[mask].mean())
         # Memory-efficient gathered log-softmax
-        token_logps = selective_log_softmax(flat_logits, flat_labels)  # (N_valid,)
-        token_nll = -token_logps
+        token_nll = F.cross_entropy(flat_logits, flat_labels, ignore_index=-100, reduction='none')
 
         if completion_ppl is not None:
             flat_ppl = completion_ppl[mask].to(token_nll.dtype)  # (N_valid,)
-
+            # standard_loss = token_nll.mean()
+            # print(f"DEBUG: Standard (unweighted) loss: {standard_loss.item()}")
             # Soft weights that are highest near ppl=1 and smoothly -> 0 as ppl increases
             raw_w = _low_ppl_weights(flat_ppl, tau=getattr(self, "ppl_tau", 0.75))
-            # print(raw_w.mean())
 
             # Mask NaNs/Infs (e.g., prompt/pad) to zero so they don't contribute
             w = torch.nan_to_num(raw_w, nan=0.0, posinf=0.0, neginf=0.0)
-
+            w = torch.clip(w, min=0, max=1).detach()
             # Normalize: average over weighted tokens (keeps scale stable)
-            # denom = w.sum().clamp_min(1e-8)
-            loss = (w * token_nll).mean()
+            num_valid_tokens = mask.sum().clamp_min(1e-8)
+            loss = (w * token_nll).sum() / num_valid_tokens
             weight_mean = w.mean() if w.numel() > 0 else torch.tensor(0.0, device=logits.device)
         else:
             # Fallback: standard mean over valid tokens
@@ -182,7 +150,7 @@ if args_cli.debug_loss:
         peft_config=peft_config,        
         train_dataset=dataset,
         args=args,
-        data_collator=CustomizedDataCollatorForChatML(tokenizer, threshold=args_cli.threshold)  # Use command line argument
+        data_collator=CustomizedDataCollatorForChatML(tokenizer, threshold=-1)  # Use command line argument
     )
     trainer.train()
 else:
@@ -194,7 +162,7 @@ else:
                         # device_map="auto"
     )
     base_model.enable_input_require_grads() # important
-    target_model = PeftWithLowPPLFocus(base_model, peft_config=peft_config)
+    target_model = PeftWithLowPPLFocus(base_model, peft_config=peft_config, ppl_tau=args_cli.threshold)
     trainer = SFTTrainer(
         target_model,
         train_dataset=dataset,
