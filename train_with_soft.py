@@ -32,23 +32,30 @@ def _low_ppl_weights(ppl: torch.Tensor, tau: float = 0.75) -> torch.Tensor:
     """
     return torch.exp(-((ppl - 1.0) / tau) ** 2)
 
+
 class PeftWithLowPPLFocus(PeftModelForCausalLM):
-    ppl_tau: float = 0.75  # tune this
+
+    def __init__(
+        self, model, ppl_tau=0.75, **kwargs
+    ) -> None:
+        super().__init__(model, **kwargs)
+        self.ppl_tau = ppl_tau
 
     def forward(self, *args: Any, **kwargs: Any):
         labels = kwargs['labels']
         completion_ppl = kwargs.pop('completion_ppl', None)
-
+        kwargs = { k:v for k, v in kwargs.items() if k != 'labels'}
+        kwargs['return_dict'] = True
         # Forward for logits
-        preds = self.get_base_model()(*args, **kwargs)  # CausalLMOutput...
-        logits = preds.logits  # (B, T, V)
+        preds = super().forward(*args, **kwargs)  # CausalLMOutput...
+        logits = preds['logits']  # (B, T, V)
 
         # Valid-token mask
         mask = (labels != -100)  # (B, T)
-        logits = logits[:, :-1, :]        # (B, T-1, V)
-        labels = labels[:, 1:]            # (B, T-1)
-        mask   = mask[:, 1:]              # align with labels
-        completion_ppl = completion_ppl[:, 1:]
+        logits = logits[:, :-1, :].contiguous()        # (B, T-1, V)
+        labels = labels[:, 1:].contiguous()            # (B, T-1)
+        mask   = mask[:, 1:].contiguous()              # align with labels
+        completion_ppl = completion_ppl[:, 1:].contiguous()
 
         # Per-token NLL on valid positions
         flat_logits = logits[mask]          # (N_valid, V)
@@ -62,7 +69,7 @@ class PeftWithLowPPLFocus(PeftModelForCausalLM):
             # standard_loss = token_nll.mean()
             # print(f"DEBUG: Standard (unweighted) loss: {standard_loss.item()}")
             # Soft weights that are highest near ppl=1 and smoothly -> 0 as ppl increases
-            raw_w = _low_ppl_weights(flat_ppl, tau=getattr(self, "ppl_tau", 0.75))
+            raw_w = _low_ppl_weights(flat_ppl, tau=self.ppl_tau)
 
             # Mask NaNs/Infs (e.g., prompt/pad) to zero so they don't contribute
             w = torch.nan_to_num(raw_w, nan=0.0, posinf=0.0, neginf=0.0)
@@ -76,9 +83,9 @@ class PeftWithLowPPLFocus(PeftModelForCausalLM):
             loss = token_nll.mean()
             weight_mean = torch.tensor(1.0, device=logits.device)
 
-        preds.loss = loss
-        preds.token_nll_mean = token_nll.mean()
-        preds.low_ppl_weight_mean = weight_mean
+        preds['loss'] = loss
+        preds['token_nll_mean'] = token_nll.mean()
+        preds['low_ppl_weight_mean'] = weight_mean
         return preds
 
 # Add argument parser
