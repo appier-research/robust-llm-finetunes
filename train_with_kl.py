@@ -56,47 +56,90 @@ def selective_log_softmax(logits, index):
         per_token_logps = torch.stack(per_token_logps)
     return per_token_logps
 
+# we found a bug in the previous code : label not shifted
 class PeftWithKL(PeftModelForCausalLM):
 
     def forward(self, *args: Any, **kwargs: Any):
-        """
-        Forward pass of the model.
-        """
+        labels: torch.Tensor = kwargs["labels"]  # (B, T)
+        # We'll compute the loss ourselves; do NOT let inner model compute a loss.
+        kwargs_labels = {k: v for k, v in kwargs.items()}
+        device = labels.device
+
+        # ---------------------------
+        # 1) Reference model pass (no adapters, no grad, no labels)
+        # ---------------------------
+        # Ensure adapters are disabled only for this block and always re-enabled.
         self.base_model.disable_adapter_layers()
-        labels = kwargs['labels']
-        outputs = self.get_base_model()(*args, **kwargs)
-        ref_loss = outputs.loss
-        ref_logits = outputs.logits
-        ref_logits /= self.kl_temperature + 1e-7
+        try:
+            with torch.no_grad():
+                ref_outputs = self.get_base_model()(*args, **kwargs_labels, return_dict=True)
+                ref_logits = ref_outputs.logits  # (B, T, V)
+        finally:
+            self.base_model.enable_adapter_layers()
 
-        mask          = labels != -100             # boolean mask of valid positions
-        flat_logits   = ref_logits[mask]               # shape (N_valid, num_classes)
-        flat_index    = labels[mask]               # shape (N_valid,)
-        ref_logprobs   = selective_log_softmax(flat_logits, flat_index)
-        self.base_model.enable_adapter_layers()
-        del outputs, flat_logits
-        torch.cuda.empty_cache()
-        gc.collect()
+        # Temperature on the reference distribution
+        ref_logits = ref_logits / (getattr(self, "kl_temperature", 1.0) + 1e-7)
 
+        # ---------------------------
+        # 2) PEFT model pass (adapters ON), still no labels to avoid base loss
+        # ---------------------------
         with self._enable_peft_forward_hooks(*args, **kwargs):
-            kwargs = {k: v for k, v in kwargs.items() if k not in self.special_peft_forward_args}
-            preds = self.get_base_model()(*args, **kwargs)
-        pred_logits = preds.logits
+            peft_outputs = self.get_base_model()(*args, **kwargs_labels, return_dict=True)
+            pred_logits = peft_outputs.logits  # (B, T, V)
 
-        flat_logits  = pred_logits[mask]               # shape (N_valid, num_classes)
-        logprobs   = selective_log_softmax(flat_logits, flat_index)
-        xentropy_loss = preds.loss
+        # ---------------------------
+        # 3) Causal LM shift + mask
+        # ---------------------------
+        # labels:    (B, T)   -> shift to (B, T-1)
+        # logits:    (B, T,V) -> (B, T-1, V)
+        mask = (labels != -100)
+        labels_shift = labels[:, 1:]
+        mask_shift   = mask[:, 1:]
+        pred_logits  = pred_logits[:, :-1, :]
+        ref_logits   = ref_logits[:,  :-1, :]
 
-        # I wasn't sure if this stays equiv after grad acc
-        # https://github.com/huggingface/trl/blob/main/trl/trainer/ppo_trainer.py#L508
-        logr = ref_logprobs - logprobs
-        kl = -logr if self.kl_estimator == "k1" else (logr.exp() - 1) - logr  # Else statement is k3
-        mean_kl = kl.mean()
-        non_score_reward = -self.kl_coef * kl
-        mean_non_score_reward = non_score_reward.mean()
-        preds.kl_div = mean_non_score_reward
-        preds.loss += mean_non_score_reward
-        return preds
+        # Flatten valid positions
+        flat_mask      = mask_shift          # (B, T-1) -> boolean
+        flat_labels    = labels_shift[flat_mask]          # (N_valid,)
+        flat_pred_log  = pred_logits[flat_mask]           # (N_valid, V)
+        flat_ref_log   = ref_logits[flat_mask]            # (N_valid, V)
+
+        # ---------------------------
+        # 4) Cross-entropy on PEFT (our main supervised loss)
+        # ---------------------------
+        # selective_log_softmax(gather) equals F.cross_entropy with ignore_index if done on flat rows
+        pred_logps_taken = selective_log_softmax(flat_pred_log, flat_labels)  # log p_pred(y*)
+        ce_loss = (-pred_logps_taken).mean()
+
+        # ---------------------------
+        # 5) KL proxy on taken-action log-probs (PPO-style reward shaping)
+        #    r = exp(logp_ref - logp_pred)
+        # ---------------------------
+        ref_logps_taken = selective_log_softmax(flat_ref_log, flat_labels)   # log p_ref(y*)
+        logr = ref_logps_taken - pred_logps_taken  # log r
+
+        kl_estimator = getattr(self, "kl_estimator", "k1")
+        if kl_estimator == "k1":
+            # KL proxy: -log r
+            kl_per_token = -logr
+        else:
+            # k3: (r - 1) - log r  where r = exp(logr)
+            r = torch.exp(logr)
+            kl_per_token = (r - 1.0) - logr
+
+        mean_kl = kl_per_token.mean()
+        kl_coef = torch.as_tensor(getattr(self, "kl_coef", 0.0), device=device, dtype=pred_logps_taken.dtype)
+
+        # Final loss = CE + kl_coef * KL_proxy
+        loss = ce_loss + kl_coef * mean_kl
+
+        # Package outputs similar to HF/TRL expectations
+        out = peft_outputs  # keep logits etc for downstream features
+        out.loss = loss
+        out.kl_div = (kl_coef * mean_kl)  # log it if you like
+        out.ce_loss = ce_loss
+        out.mean_kl = mean_kl
+        return out
 
 # Add argument parser
 parser = argparse.ArgumentParser(description='Train model with custom learning rate and threshold')
